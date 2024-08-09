@@ -8,9 +8,13 @@
         "build": "tsc && vite build",
         "preview": "vite preview"
     },
+    "dependencies": {
+        "@fontsource/inconsolata": "^5.0.18"
+    },
     "devDependencies": {
         "autoprefixer": "^10.4.20",
         "postcss": "^8.4.41",
+        "postcss-import": "^16.1.0",
         "prettier-plugin-classnames": "^0.7.1",
         "prettier-plugin-merge": "^0.7.0",
         "prettier-plugin-tailwindcss": "^0.6.6",
