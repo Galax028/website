@@ -1,0 +1,15 @@
+{
+  "plugins": [
+    "prettier-plugin-classnames",
+    "prettier-plugin-tailwindcss",
+    "prettier-plugin-merge"
+  ],
+  "overrides": [
+    {
+      "files": "*.json",
+      "options": {
+        "tabWidth": 4
+      }
+    }
+  ]
+}
