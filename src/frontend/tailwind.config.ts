@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 import defaultTheme from "tailwindcss/defaultTheme";
 
 export default {
-  content: ["./index.html", "./src/pages/*.html"],
+  content: ["./src/*.html"],
   theme: {
     extend: {
       fontFamily: {
