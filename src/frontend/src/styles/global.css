@@ -5,13 +5,29 @@
 @tailwind components;
 @tailwind utilities;
 
+h1 {
+  @apply mb-2 text-4xl font-bold;
+}
+
+p {
+  @apply mb-8;
+}
+
+main a {
+  @apply underline decoration-dashed hover:text-orange-500;
+}
+
+svg {
+  @apply inline-block whitespace-nowrap text-neutral-950 dark:text-neutral-50;
+}
+
 html,
 body {
   @apply min-h-screen;
 }
 
 body {
-  @apply flex flex-col items-stretch justify-items-center bg-zinc-900 font-mono text-neutral-50;
+  @apply flex flex-col items-stretch justify-items-center bg-zinc-100 font-mono text-neutral-950 dark:bg-zinc-900 dark:text-neutral-50;
 }
 
 header,
@@ -20,42 +36,30 @@ footer {
   @apply mx-auto w-11/12 max-w-3xl py-6;
 }
 
-header {
-  @apply flex justify-between border-b border-b-orange-700;
+header > nav > ul > li > a {
+  @apply hover:text-orange-500;
 }
 
-header > a.logo {
-  @apply text-3xl font-bold;
+header > nav > ul button > svg {
+  @apply hover:text-orange-500;
 }
 
-header > nav {
-  @apply content-center text-lg font-bold;
+footer > ul .contact-item {
+  @apply flex justify-center gap-2;
 }
 
-header > nav > ul {
-  @apply flex gap-8;
+footer > ul a.contact-item {
+  @apply hover:text-orange-500;
 }
 
-header > nav > ul > li > a:hover {
+footer > ul a.contact-item:hover > svg {
   @apply text-orange-500;
 }
 
-main {
-  @apply grow;
-}
-
-footer {
-  @apply flex justify-between border-t border-t-orange-700;
-}
-
 footer > span.copyright {
-  @apply text-sm text-neutral-600 text-center;
+  @apply text-center text-sm text-neutral-600;
 }
 
 footer > span.copyright > a {
-  @apply underline decoration-dashed;
-}
-
-footer > span.copyright > a:hover {
-  @apply text-neutral-50;
+  @apply underline decoration-dashed hover:text-neutral-950 hover:dark:text-neutral-50;
 }

@@ -36,7 +36,7 @@ async fn main() {
         .expect("Failed to crate a database connection pool");
 
     let app = Router::new()
-        .nest("/", routes::register(&config.static_root))
+        .merge(routes::register(&config.static_root))
         .with_state(AppState {
             config: config.clone(),
             pool,
