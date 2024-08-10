@@ -5,6 +5,22 @@
 @tailwind components;
 @tailwind utilities;
 
+h1 {
+  @apply mb-2 text-4xl font-bold;
+}
+
+p {
+  @apply mb-8;
+}
+
+p > a {
+  @apply underline decoration-dashed hover:text-orange-500;
+}
+
+svg {
+  @apply inline-block whitespace-nowrap text-neutral-50;
+}
+
 html,
 body {
   @apply min-h-screen;
@@ -12,10 +28,6 @@ body {
 
 body {
   @apply flex flex-col items-stretch justify-items-center bg-zinc-900 font-mono text-neutral-50;
-}
-
-svg {
-  @apply text-neutral-50;
 }
 
 header,
@@ -40,8 +52,8 @@ header > nav > ul {
   @apply flex gap-8;
 }
 
-header > nav > ul > li > a:hover {
-  @apply text-orange-500;
+header > nav > ul > li > a {
+  @apply hover:text-orange-500;
 }
 
 main {
@@ -60,8 +72,8 @@ footer > ul .contact-item {
   @apply flex justify-center gap-2;
 }
 
-footer > ul a.contact-item:hover {
-  @apply text-orange-500;
+footer > ul a.contact-item {
+  @apply hover:text-orange-500;
 }
 
 footer > ul a.contact-item:hover > svg {
@@ -70,10 +82,6 @@ footer > ul a.contact-item:hover > svg {
 
 footer > span.powered-by {
   @apply my-4 text-center;
-}
-
-footer > span.powered-by > svg {
-  @apply inline-block whitespace-nowrap;
 }
 
 footer > span.copyright {
