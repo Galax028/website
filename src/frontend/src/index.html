@@ -3,18 +3,66 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="/setInitialTheme.ts"></script>
     <link rel="stylesheet" href="/styles/global.css" />
+    <link
+      href="/favicon-light-mode.png"
+      rel="icon"
+      media="(prefers-color-scheme: light)"
+    />
+    <link
+      href="/favicon-dark-mode.png"
+      rel="icon"
+      media="(prefers-color-scheme: dark)"
+    />
     <title>Phawat Suksiriwan</title>
   </head>
 
   <body>
     <header>
-      <a class="logo" href="/">Phawat Suksiriwan</a>
+      <a class="logo" href="/">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          class="duration-300 ease-[cubic-bezier(.22,.68,0,1.71)] hover:-rotate-90"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path
+            d="M20.118 3h-16.225a2.914 2.914 0 0 0 -2.503 4.371l8.116 13.549a2.917 2.917 0 0 0 4.987 .005l8.11 -13.539a2.914 2.914 0 0 0 -2.486 -4.386z"
+          />
+        </svg>
+        Phawat Suksiriwan
+      </a>
       <nav>
         <ul>
           <li><a href="/blog">Blog</a></li>
-          <li><a href="/">Projects</a></li>
-          <li><a href="/">Contact</a></li>
+          <li><a href="/projects">Projects</a></li>
+          <div class="seperator"></div>
+          <li>
+            <button id="theme-toggle-btn">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-sun"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                <path
+                  d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"
+                />
+              </svg>
+            </button>
+          </li>
         </ul>
       </nav>
     </header>
@@ -31,9 +79,10 @@
         and systems administration (although, on a small scale).
         <br />
         <br />
-        On this website, you can find my blog (which I rarely post, lol), any
-        projects that I have contributed to, and my contacts &ndash; just in
-        case you need to get in touch. Hope you have a nice time!
+        On this website, you can find my <a href="/blog">blog</a> (which I
+        rarely post, lol), any projects that I have contributed to, and my
+        contacts &ndash; just in case you need to get in touch. Hope you have a
+        nice time!
       </p>
       <h1>A little more about me</h1>
       <p>

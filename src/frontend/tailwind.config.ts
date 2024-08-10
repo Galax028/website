@@ -3,6 +3,7 @@ import defaultTheme from "tailwindcss/defaultTheme";
 
 export default {
   content: ["./src/*.html"],
+  darkMode: "selector",
   theme: {
     extend: {
       fontFamily: {

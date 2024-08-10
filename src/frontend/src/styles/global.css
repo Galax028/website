@@ -18,7 +18,7 @@ p > a {
 }
 
 svg {
-  @apply inline-block whitespace-nowrap text-neutral-50;
+  @apply inline-block whitespace-nowrap text-neutral-950 dark:text-neutral-50;
 }
 
 html,
@@ -27,7 +27,7 @@ body {
 }
 
 body {
-  @apply flex flex-col items-stretch justify-items-center bg-zinc-900 font-mono text-neutral-50;
+  @apply flex flex-col items-stretch justify-items-center bg-zinc-100 font-mono text-neutral-950 dark:bg-zinc-900 dark:text-neutral-50;
 }
 
 header,
@@ -41,7 +41,7 @@ header {
 }
 
 header > a.logo {
-  @apply text-3xl font-bold;
+  @apply flex items-center gap-4 text-3xl font-bold;
 }
 
 header > nav {
@@ -53,6 +53,14 @@ header > nav > ul {
 }
 
 header > nav > ul > li > a {
+  @apply hover:text-orange-500;
+}
+
+header > nav > ul > div.seperator {
+  @apply w-px bg-neutral-600;
+}
+
+header > nav > ul button > svg {
   @apply hover:text-orange-500;
 }
 
@@ -89,5 +97,5 @@ footer > span.copyright {
 }
 
 footer > span.copyright > a {
-  @apply underline decoration-dashed hover:text-neutral-50;
+  @apply underline decoration-dashed hover:text-neutral-950 hover:dark:text-neutral-50;
 }
