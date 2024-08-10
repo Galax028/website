@@ -54,6 +54,7 @@ header nav > ul > li > a {
   @apply hover:text-orange-500;
 }
 
+/* Displays the mobile navbar only when the moilbe nav toggle button is toggled */
 header:has(
     > div:first-child > button#mobile-nav-toggle-btn[data-toggled="true"]
   )
