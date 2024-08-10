@@ -13,7 +13,7 @@ p {
   @apply mb-8;
 }
 
-p > a {
+main a {
   @apply underline decoration-dashed hover:text-orange-500;
 }
 
@@ -36,44 +36,12 @@ footer {
   @apply mx-auto w-11/12 max-w-3xl py-6;
 }
 
-header {
-  @apply flex justify-between border-b border-b-orange-700;
-}
-
-header > a.logo {
-  @apply flex items-center gap-4 text-3xl font-bold;
-}
-
-header > nav {
-  @apply content-center text-lg font-bold;
-}
-
-header > nav > ul {
-  @apply flex gap-8;
-}
-
 header > nav > ul > li > a {
   @apply hover:text-orange-500;
 }
 
-header > nav > ul > div.seperator {
-  @apply w-px bg-neutral-600;
-}
-
 header > nav > ul button > svg {
   @apply hover:text-orange-500;
-}
-
-main {
-  @apply grow;
-}
-
-footer {
-  @apply flex flex-col justify-between border-t border-t-orange-700;
-}
-
-footer > ul {
-  @apply flex justify-center gap-12;
 }
 
 footer > ul .contact-item {
@@ -86,10 +54,6 @@ footer > ul a.contact-item {
 
 footer > ul a.contact-item:hover > svg {
   @apply text-orange-500;
-}
-
-footer > span.powered-by {
-  @apply my-4 text-center;
 }
 
 footer > span.copyright {
