@@ -9,6 +9,9 @@ export default {
       fontFamily: {
         mono: ["Inconsolata", ...defaultTheme.fontFamily.mono],
       },
+      transitionTimingFunction: {
+        "shake": "cubic-bezier(0.22, 0.68, 0, 1.71)",
+      },
     },
   },
   plugins: [],

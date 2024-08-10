@@ -27,7 +27,8 @@ body {
 }
 
 body {
-  @apply flex flex-col items-stretch justify-items-center bg-zinc-100 font-mono text-neutral-950 dark:bg-zinc-900 dark:text-neutral-50;
+  @apply flex flex-col items-stretch justify-items-center bg-zinc-100;
+  @apply font-mono text-neutral-950 dark:bg-zinc-900 dark:text-neutral-50;
 }
 
 header,
@@ -36,16 +37,36 @@ footer {
   @apply mx-auto w-11/12 max-w-3xl py-6;
 }
 
-header > nav > ul > li > a {
+header > div:first-child > button#mobile-nav-toggle-btn {
+  @apply content-center hover:text-orange-500 sm:hidden;
+}
+
+header
+  > div:first-child
+  > button#mobile-nav-toggle-btn[data-toggled="true"]
+  > svg {
+  @apply text-orange-500;
+}
+
+header button.theme-toggle-btn > svg,
+header > div:first-child > button#mobile-nav-toggle-btn > svg,
+header nav > ul > li > a {
   @apply hover:text-orange-500;
 }
 
-header > nav > ul button > svg {
-  @apply hover:text-orange-500;
+header:has(
+    > div:first-child > button#mobile-nav-toggle-btn[data-toggled="true"]
+  )
+  > nav {
+  @apply flex sm:hidden;
+}
+
+header nav {
+  @apply content-center text-lg font-bold;
 }
 
 footer > ul .contact-item {
-  @apply flex justify-center gap-2;
+  @apply flex gap-2 sm:flex-row;
 }
 
 footer > ul a.contact-item {
@@ -61,5 +82,6 @@ footer > span.copyright {
 }
 
 footer > span.copyright > a {
-  @apply underline decoration-dashed hover:text-neutral-950 hover:dark:text-neutral-50;
+  @apply underline decoration-dashed hover:text-neutral-950;
+  @apply hover:dark:text-neutral-50;
 }

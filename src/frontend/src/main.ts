@@ -10,42 +10,53 @@ function getCurrentTheme(): Theme {
 function main(): void {
   console.log("Hello, world!");
 
-  const themeToggleBtn = document.getElementById(
-    "theme-toggle-btn",
-  ) as HTMLButtonElement;
-  const lightModeIcon = document.querySelector(
-    "#theme-toggle-btn > svg.light-mode-icon",
-  ) as SVGElement;
-  const darkModeIcon = document.querySelector(
-    "#theme-toggle-btn > svg.dark-mode-icon",
-  ) as SVGElement;
+  const themeToggleBtnArray = Array.from(
+    document.getElementsByClassName("theme-toggle-btn"),
+  ) as HTMLButtonElement[];
+  const lightModeIcons = document.querySelectorAll(
+    "header button.theme-toggle-btn > svg.light-mode-icon",
+  ) as NodeListOf<SVGElement>;
+  const darkModeIcons = document.querySelectorAll(
+    "header button.theme-toggle-btn > svg.dark-mode-icon",
+  ) as NodeListOf<SVGElement>;
 
   const initialTheme = getCurrentTheme();
   if (initialTheme === "dark") {
-    lightModeIcon.classList.add("hidden");
-    darkModeIcon.classList.remove("hidden");
+    lightModeIcons.forEach((icon) => icon.classList.add("hidden"));
+    darkModeIcons.forEach((icon) => icon.classList.remove("hidden"));
   } else {
-    darkModeIcon.classList.add("hidden");
-    lightModeIcon.classList.remove("hidden");
+    darkModeIcons.forEach((icon) => icon.classList.add("hidden"));
+    lightModeIcons.forEach((icon) => icon.classList.remove("hidden"));
   }
 
-  themeToggleBtn.addEventListener("click", (): void => {
-    const currentTheme = getCurrentTheme();
+  themeToggleBtnArray.forEach((themeToggleBtn) =>
+    themeToggleBtn.addEventListener("click", () => {
+      const currentTheme = getCurrentTheme();
 
-    switch (currentTheme) {
-      case "dark":
-        localStorage.setItem("theme", "light");
-        document.documentElement.classList.remove("dark");
-        darkModeIcon.classList.add("hidden");
-        lightModeIcon.classList.remove("hidden");
-        break;
-      case "light":
-        localStorage.setItem("theme", "dark");
-        document.documentElement.classList.add("dark");
-        lightModeIcon.classList.add("hidden");
-        darkModeIcon.classList.remove("hidden");
-        break;
-    }
+      switch (currentTheme) {
+        case "dark":
+          localStorage.setItem("theme", "light");
+          document.documentElement.classList.remove("dark");
+          darkModeIcons.forEach((icon) => icon.classList.add("hidden"));
+          lightModeIcons.forEach((icon) => icon.classList.remove("hidden"));
+          break;
+        case "light":
+          localStorage.setItem("theme", "dark");
+          document.documentElement.classList.add("dark");
+          lightModeIcons.forEach((icon) => icon.classList.add("hidden"));
+          darkModeIcons.forEach((icon) => icon.classList.remove("hidden"));
+          break;
+      }
+    }),
+  );
+
+  const mobileNavToggleBtn = document.getElementById(
+    "mobile-nav-toggle-btn",
+  ) as HTMLButtonElement;
+
+  mobileNavToggleBtn.addEventListener("click", () => {
+    const toggled = mobileNavToggleBtn.dataset.toggled === "true";
+    mobileNavToggleBtn.dataset.toggled = String(!toggled);
   });
 }
 
