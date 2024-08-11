@@ -2,6 +2,7 @@
 
 mod config;
 mod routes;
+mod templating;
 
 use axum::Router;
 use config::AppConfig;

@@ -28,6 +28,11 @@
       rel="icon"
       media="(prefers-color-scheme: dark)"
     />
+    {% if meta.mode == "production" %} {% for cssFile in meta.cssFiles %}
+    <link rel="stylesheet" href="/{{ cssFile }}" />
+    {% endfor %} {% for jsFile in meta.jsFiles %}
+    <script type="module" src="/{{ jsFile }}"></script>
+    {% endfor %} {% endif %}
     <title>{% block title %}{% endblock %}Phawat Suksiriwan</title>
   </head>
   <body>
@@ -301,7 +306,7 @@
         <a href="https://tabler.io/icons">Tabler Icons</a>.
       </span>
     </footer>
-    {% if mode == "development" %}
+    {% if meta.mode == "development" %}
     <script type="module" src="http://localhost:5173/@vite/client"></script>
     <script type="module" src="http://localhost:5173/main.ts"></script>
     <script
