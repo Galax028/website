@@ -18,7 +18,6 @@
         document.documentElement.classList.remove("dark");
       }
     </script>
-    <link rel="stylesheet" href="/styles/global.css" />
     <link
       href="/favicon-light-mode.png"
       rel="icon"
@@ -29,7 +28,7 @@
       rel="icon"
       media="(prefers-color-scheme: dark)"
     />
-    <title>404 Not Found | Phawat Suksiriwan</title>
+    <title>{% block title %}{% endblock %}Phawat Suksiriwan</title>
   </head>
   <body>
     <header class="border-b border-b-orange-700">
@@ -161,11 +160,7 @@
         </button>
       </nav>
     </header>
-    <main class="flex grow flex-col items-center justify-center">
-      <h1 class="mb-0 text-9xl text-orange-500">404</h1>
-      <span class="mb-8">Not Found ¯\_(ツ)_/¯</span>
-      <a class="text-lg" href="/">Back to Homepage</a>
-    </main>
+    {% block main %}{% endblock %}
     <footer class="flex flex-col justify-between border-t border-t-orange-700">
       <ul>
         <li class="contact-item">
@@ -306,6 +301,13 @@
         <a href="https://tabler.io/icons">Tabler Icons</a>.
       </span>
     </footer>
-    <script type="module" src="/main.ts"></script>
+    {% if mode == "development" %}
+    <script type="module" src="http://localhost:5173/@vite/client"></script>
+    <script type="module" src="http://localhost:5173/main.ts"></script>
+    <script
+      type="module"
+      src="http://localhost:5173/styles/global.css"
+    ></script>
+    {% endif %}
   </body>
 </html>

@@ -7,13 +7,21 @@ export default defineConfig(({ mode }) => {
   return {
     root: "src",
     publicDir: "../public",
+    server: {
+      origin: "http://localhost:5173",
+    },
     build: {
+      manifest: true,
       emptyOutDir: true,
       outDir: mode === "production" ? env.OUTDIR_PROD : env.OUTDIR_DEV,
       rollupOptions: {
+        // input: {
+        //   main: resolve(__dirname, "src/index.html"),
+        //   error: resolve(__dirname, "src/error.html"),
+        // },
         input: {
-          main: resolve(__dirname, "src/index.html"),
-          notFound: resolve(__dirname, "src/not-found.html"),
+          main: resolve(__dirname, "src/main.ts"),
+          global: resolve(__dirname, "src/styles/global.css"),
         },
       },
     },
