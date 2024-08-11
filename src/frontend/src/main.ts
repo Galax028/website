@@ -1,5 +1,13 @@
 type Theme = "dark" | "light";
 
+/**
+ * Gets the current theme preference.
+ *
+ * Checks `localStorage` for the current theme. If `null`, falls back to using
+ * `window.matchMedia()` to check the preferred color scheme.
+ *
+ * @returns {Theme} The current theme, either `dark` or `light`.
+ */
 function getCurrentTheme(): Theme {
   return (localStorage.getItem("theme") ??
     (window.matchMedia("(prefers-color-scheme: dark)").matches

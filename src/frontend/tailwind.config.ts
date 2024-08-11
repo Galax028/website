@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 import defaultTheme from "tailwindcss/defaultTheme";
 
 export default {
-  content: ["./src/**/*.html"],
+  content: ["./src/**/*.{html,ts}"],
   darkMode: "selector",
   theme: {
     extend: {

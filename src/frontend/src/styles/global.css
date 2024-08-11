@@ -5,18 +5,6 @@
 @tailwind components;
 @tailwind utilities;
 
-h1 {
-  @apply mb-2 text-4xl font-bold;
-}
-
-p {
-  @apply mb-8;
-}
-
-main a {
-  @apply underline decoration-dashed hover:text-orange-500;
-}
-
 svg {
   @apply inline-block whitespace-nowrap text-neutral-950 dark:text-neutral-50;
 }
@@ -41,6 +29,7 @@ header > div:first-child > button#mobile-nav-toggle-btn {
   @apply content-center hover:text-orange-500 sm:hidden;
 }
 
+/* Turns the hamburger icon's color to orange when the mobile nav is toggled */
 header
   > div:first-child
   > button#mobile-nav-toggle-btn[data-toggled="true"]
@@ -54,7 +43,7 @@ header nav > ul > li > a {
   @apply hover:text-orange-500;
 }
 
-/* Displays the mobile navbar only when the moilbe nav toggle button is toggled */
+/* Displays the mobile nav when the mobile nav toggle button is toggled */
 header:has(
     > div:first-child > button#mobile-nav-toggle-btn[data-toggled="true"]
   )
@@ -64,6 +53,26 @@ header:has(
 
 header nav {
   @apply content-center text-lg font-bold;
+}
+
+main h1 {
+  @apply mb-2 text-4xl font-bold;
+}
+
+main h2 {
+  @apply mb-2 text-3xl font-bold;
+}
+
+main p {
+  @apply pb-8 text-lg leading-6 last:pb-0;
+}
+
+main a {
+  @apply underline decoration-dashed hover:text-orange-500;
+}
+
+footer > ul {
+  @apply flex flex-row flex-wrap items-center justify-center gap-x-12 gap-y-2;
 }
 
 footer > ul .contact-item {
