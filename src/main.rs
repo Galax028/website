@@ -2,26 +2,19 @@
 
 mod config;
 mod routes;
+mod state;
 mod templating;
 
 use axum::Router;
-use config::AppConfig;
 use http::{header, Method};
-use minijinja::{path_loader, Environment};
-use minijinja_autoreload::AutoReloader;
-use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePool, SqlitePoolOptions};
-use std::{path::PathBuf, str::FromStr, sync::Arc, time::Duration};
+use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePoolOptions};
+use std::{str::FromStr, time::Duration};
 use tokio::net::TcpListener;
 use tower::ServiceBuilder;
 use tower_http::{cors::CorsLayer, normalize_path::NormalizePathLayer};
 
-/// Global state for the application.
-#[derive(Clone)]
-pub(crate) struct AppState {
-    config: AppConfig,
-    pool: SqlitePool,
-    templater: Arc<AutoReloader>,
-}
+pub(crate) use config::AppConfig;
+pub(crate) use state::AppState;
 
 #[tokio::main]
 async fn main() {
@@ -39,18 +32,14 @@ async fn main() {
         .await
         .expect("Failed to crate a database connection pool");
 
-    let app_state = AppState {
-        config: config.clone(),
-        pool,
-        templater: Arc::new(AutoReloader::new(|notifier| {
-            let templates_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("src/frontend/src");
-            let mut templater = Environment::new();
-            templater.set_loader(path_loader(&templates_dir));
-            notifier.watch_path(templates_dir, true);
+    // #[cfg(debug_assertions)]
+    // let app_state = AppState::new(config.clone(), pool);
 
-            Ok(templater)
-        })),
-    };
+    // #[cfg(not(debug_assertions))]
+    let app_state = AppState::new(config.clone(), pool)
+        .load_templates()
+        .await
+        .expect("Failed to load templates");
 
     let app = Router::new()
         .merge(routes::register(&config.static_root))

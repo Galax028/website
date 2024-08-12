@@ -16,6 +16,9 @@ export default defineConfig(({ mode }) => {
       outDir: mode === "production" ? env.OUTDIR_PROD : env.OUTDIR_DEV,
       rollupOptions: {
         input: {
+          documentTemplate: resolve(__dirname, "src/document.html"),
+          indexTemplate: resolve(__dirname, "src/index.html"),
+          errorTemplate: resolve(__dirname, "src/error.html"),
           main: resolve(__dirname, "src/main.ts"),
           global: resolve(__dirname, "src/styles/global.css"),
         },
