@@ -1,15 +1,17 @@
 #![warn(clippy::pedantic)]
 
-mod config;
-mod routes;
-mod state;
-mod templating;
+pub(crate) mod config;
+pub(crate) mod error;
+pub(crate) mod routes;
+pub(crate) mod state;
+pub(crate) mod templating;
 
+use anyhow::{Context, Result};
 use axum::Router;
 use http::{header, Method};
 use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePoolOptions};
 use std::{str::FromStr, time::Duration};
-use tokio::net::TcpListener;
+use tokio::{net::TcpListener, signal};
 use tower::ServiceBuilder;
 use tower_http::{cors::CorsLayer, normalize_path::NormalizePathLayer};
 
@@ -17,20 +19,20 @@ pub(crate) use config::AppConfig;
 pub(crate) use state::AppState;
 
 #[tokio::main]
-async fn main() {
-    let config = AppConfig::new();
+async fn main() -> Result<()> {
+    let config = AppConfig::new().context("Failed to parse config")?;
 
     let pool = SqlitePoolOptions::new()
         .acquire_timeout(Duration::from_secs(10))
         .connect_with(
             SqliteConnectOptions::from_str(&config.database_url)
-                .expect("Failed to parse DATABASE_URL")
+                .context("Failed to parse DATABASE_URL")?
                 .analysis_limit(1000)
                 .journal_mode(SqliteJournalMode::Wal)
                 .optimize_on_close(true, None),
         )
         .await
-        .expect("Failed to crate a database connection pool");
+        .context("Failed to crate a database connection pool")?;
 
     #[cfg(debug_assertions)]
     let app_state = AppState::new(config.clone(), pool);
@@ -39,7 +41,7 @@ async fn main() {
     let app_state = AppState::new(config.clone(), pool)
         .load_templates()
         .await
-        .expect("Failed to load templates");
+        .context("Failed to load templates")?;
 
     let app = Router::new()
         .merge(routes::register(&config.static_root))
@@ -72,5 +74,36 @@ async fn main() {
         );
 
     let listener = TcpListener::bind((config.host, config.port)).await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+    axum::serve(listener, app)
+        .with_graceful_shutdown(shutdown_signal())
+        .await
+        .context("Failed to serve the application")?;
+
+    Ok(())
+}
+
+async fn shutdown_signal() {
+    let ctrl_c = async {
+        signal::ctrl_c()
+            .await
+            .context("Failed to install SIGINT handler")
+            .unwrap();
+    };
+
+    #[cfg(unix)]
+    let terminate = async {
+        signal::unix::signal(signal::unix::SignalKind::terminate())
+            .context("Failed to install SIGTERM handler")
+            .unwrap()
+            .recv()
+            .await;
+    };
+
+    #[cfg(not(unix))]
+    let terminate = std::future::pending::<()>();
+
+    tokio::select! {
+        () = ctrl_c => {},
+        () = terminate => {},
+    }
 }

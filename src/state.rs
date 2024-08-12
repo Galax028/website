@@ -1,4 +1,5 @@
 use crate::AppConfig;
+
 use minijinja::Environment as JinjaEnvironment;
 use sqlx::SqlitePool;
 
@@ -8,6 +9,8 @@ use minijinja_autoreload::AutoReloader as JinjaAutoReloader;
 use std::{path::PathBuf, sync::Arc};
 
 #[cfg(not(debug_assertions))]
+use anyhow::Result;
+#[cfg(not(debug_assertions))]
 use tokio::fs;
 
 #[cfg(debug_assertions)]
@@ -15,6 +18,7 @@ use tokio::fs;
 #[derive(Clone)]
 pub(crate) struct AppState {
     pub config: AppConfig,
+    #[allow(dead_code)] // TODO: Remove later when pool gets used.
     pub pool: SqlitePool,
     pub templater: Arc<JinjaAutoReloader>,
 }
@@ -44,6 +48,7 @@ impl AppState {
 #[derive(Clone)]
 pub(crate) struct AppState {
     pub config: AppConfig,
+    #[allow(dead_code)] // TODO: Remove later when pool gets used.
     pub pool: SqlitePool,
     pub templater: JinjaEnvironment<'static>,
 }
@@ -60,15 +65,16 @@ impl AppState {
     }
 
     /// Load Jinja templates into the templater.
-    pub(crate) async fn load_templates(mut self) -> Result<Self, std::io::Error> {
+    pub(crate) async fn load_templates(mut self) -> Result<Self> {
         let mut templates_dir = fs::read_dir(&self.config.static_root).await?;
 
         while let Some(file) = templates_dir.next_entry().await? {
             let file_path = file.path();
             let file_type = file.file_type().await?;
+            // Unwrap-safe: Every modern filesystem in the world should be using Unicode by now.
             let file_name = file.file_name().into_string().unwrap();
 
-            // Iterate over to the next item if the current item is not a HTML file
+            // Iterate over to the next item if the current item is not a HTML file.
             if !(file_type.is_file()
                 && file_path
                     .extension()
@@ -77,10 +83,8 @@ impl AppState {
                 continue;
             }
 
-            let template = String::from_utf8(fs::read(&file_path).await?).unwrap();
-            self.templater
-                .add_template_owned(file_name, template)
-                .unwrap();
+            let template = String::from_utf8(fs::read(&file_path).await?)?;
+            self.templater.add_template_owned(file_name, template)?;
         }
 
         Ok(self)

@@ -1,4 +1,4 @@
-use minijinja::Error as JinjaError;
+use anyhow::Result;
 use serde::Serialize;
 use std::path::Path;
 
@@ -49,14 +49,12 @@ struct ViteManifestItem {
 }
 
 #[cfg(debug_assertions)]
-// TODO: Proper error handling
-pub(crate) async fn get_css_links(_: &Path) -> Result<Vec<String>, std::io::Error> {
+pub(crate) async fn get_css_links(_: &Path) -> Result<Vec<String>> {
     Ok(Vec::new())
 }
 
 #[cfg(debug_assertions)]
-// TODO: Proper error handling
-pub(crate) async fn get_script_tags(_: &Path) -> Result<Vec<String>, std::io::Error> {
+pub(crate) async fn get_script_tags(_: &Path) -> Result<Vec<String>> {
     Ok(["@vite/client", "main.ts", "styles/global.css"]
         .iter()
         .map(|s| format!(r#"<script type="module" src="http://localhost:5173/{s}"></script>"#))
@@ -64,11 +62,9 @@ pub(crate) async fn get_script_tags(_: &Path) -> Result<Vec<String>, std::io::Er
 }
 
 #[cfg(not(debug_assertions))]
-// TODO: Proper error handling
-pub(crate) async fn get_css_links(static_root: &Path) -> Result<Vec<String>, std::io::Error> {
+pub(crate) async fn get_css_links(static_root: &Path) -> Result<Vec<String>> {
     let manifest_raw = fs::read_to_string(static_root.join(".vite/manifest.json")).await?;
-    let vite_manifest =
-        serde_json::from_str::<HashMap<String, ViteManifestItem>>(&manifest_raw).unwrap();
+    let vite_manifest = serde_json::from_str::<HashMap<String, ViteManifestItem>>(&manifest_raw)?;
 
     Ok(vite_manifest
         .into_values()
@@ -89,11 +85,9 @@ pub(crate) async fn get_css_links(static_root: &Path) -> Result<Vec<String>, std
 }
 
 #[cfg(not(debug_assertions))]
-// TODO: Proper error handling
-pub(crate) async fn get_script_tags(static_root: &Path) -> Result<Vec<String>, std::io::Error> {
+pub(crate) async fn get_script_tags(static_root: &Path) -> Result<Vec<String>> {
     let manifest_raw = fs::read_to_string(static_root.join(".vite/manifest.json")).await?;
-    let vite_manifest =
-        serde_json::from_str::<HashMap<String, ViteManifestItem>>(&manifest_raw).unwrap();
+    let vite_manifest = serde_json::from_str::<HashMap<String, ViteManifestItem>>(&manifest_raw)?;
 
     Ok(vite_manifest
         .into_values()
@@ -118,14 +112,14 @@ pub(crate) fn render_template<C>(
     templater: &JinjaAutoReloader,
     name: &str,
     context: C,
-) -> Result<String, JinjaError>
+) -> Result<String>
 where
     C: Serialize,
 {
-    let templater = templater.acquire_env().unwrap();
+    let templater = templater.acquire_env()?;
     let template = templater.get_template(&format!("{name}.html"))?;
 
-    template.render(context)
+    Ok(template.render(context)?)
 }
 
 #[cfg(not(debug_assertions))]
@@ -133,11 +127,11 @@ pub(crate) fn render_template<C>(
     templater: &JinjaEnvironment<'static>,
     name: &str,
     context: C,
-) -> Result<String, JinjaError>
+) -> Result<String>
 where
     C: Serialize,
 {
     let template = templater.get_template(&format!("{name}.html"))?;
 
-    template.render(context)
+    Ok(template.render(context)?)
 }
