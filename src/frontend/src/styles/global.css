@@ -5,13 +5,18 @@
 @tailwind components;
 @tailwind utilities;
 
+svg {
+  @apply inline-block whitespace-nowrap text-neutral-950 dark:text-neutral-50;
+}
+
 html,
 body {
   @apply min-h-screen;
 }
 
 body {
-  @apply flex flex-col items-stretch justify-items-center bg-zinc-900 font-mono text-neutral-50;
+  @apply flex flex-col items-stretch justify-items-center bg-zinc-100;
+  @apply font-mono text-neutral-950 dark:bg-zinc-900 dark:text-neutral-50;
 }
 
 header,
@@ -20,42 +25,73 @@ footer {
   @apply mx-auto w-11/12 max-w-3xl py-6;
 }
 
-header {
-  @apply flex justify-between border-b border-b-orange-700;
+header > div:first-child > button#mobile-nav-toggle-btn {
+  @apply content-center hover:text-orange-500 sm:hidden;
 }
 
-header > a.logo {
-  @apply text-3xl font-bold;
-}
-
-header > nav {
-  @apply content-center text-lg font-bold;
-}
-
-header > nav > ul {
-  @apply flex gap-8;
-}
-
-header > nav > ul > li > a:hover {
+/* Turns the hamburger icon's color to orange when the mobile nav is toggled */
+header
+  > div:first-child
+  > button#mobile-nav-toggle-btn[data-toggled="true"]
+  > svg {
   @apply text-orange-500;
 }
 
-main {
-  @apply grow;
+header button.theme-toggle-btn > svg,
+header > div:first-child > button#mobile-nav-toggle-btn > svg,
+header nav > ul > li > a {
+  @apply hover:text-orange-500;
 }
 
-footer {
-  @apply flex justify-between border-t border-t-orange-700;
+/* Displays the mobile nav when the mobile nav toggle button is toggled */
+header:has(
+    > div:first-child > button#mobile-nav-toggle-btn[data-toggled="true"]
+  )
+  > nav {
+  @apply flex sm:hidden;
+}
+
+header nav {
+  @apply content-center text-lg font-bold;
+}
+
+main h1 {
+  @apply mb-2 text-4xl font-bold;
+}
+
+main h2 {
+  @apply mb-2 text-3xl font-bold;
+}
+
+main p {
+  @apply pb-8 text-lg leading-6 last:pb-0;
+}
+
+main a {
+  @apply underline decoration-dashed hover:text-orange-500;
+}
+
+footer > ul {
+  @apply flex flex-row flex-wrap items-center justify-center gap-x-12 gap-y-2;
+}
+
+footer > ul .contact-item {
+  @apply flex gap-2 sm:flex-row;
+}
+
+footer > ul a.contact-item {
+  @apply hover:text-orange-500;
+}
+
+footer > ul a.contact-item:hover > svg {
+  @apply text-orange-500;
 }
 
 footer > span.copyright {
-  @apply text-sm text-neutral-600 text-center;
+  @apply text-center text-sm text-neutral-600;
 }
 
 footer > span.copyright > a {
-  @apply underline decoration-dashed;
-}
-
-footer > span.copyright > a:hover {
-  @apply text-neutral-50;
+  @apply underline decoration-dashed hover:text-neutral-950;
+  @apply hover:dark:text-neutral-50;
 }

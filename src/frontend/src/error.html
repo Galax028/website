@@ -1,0 +1,9 @@
+<!-- prettier-ignore -->
+{% extends "document.html" %}
+{% block main %}
+<main class="flex grow flex-col items-center justify-center">
+  <h1 class="mb-0 text-9xl text-orange-500">{{ errorCode }}</h1>
+  <span class="mb-8">{{ errorDescription }}</span>
+  <a class="text-lg" href="/">Back to Homepage</a>
+</main>
+{% endblock %}
