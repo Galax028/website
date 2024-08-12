@@ -28,12 +28,16 @@
       rel="icon"
       media="(prefers-color-scheme: dark)"
     />
-    {% if meta.mode == "production" %} {% for cssLink in meta.cssLinks %}
-    <!-- <link rel="stylesheet" href="/{{ cssFile }}" /> -->
-    {{ cssLink | safe }} {% endfor %} {% for scriptTag in meta.scriptTags %}
-    <!-- <script type="module" src="/{{ jsFile }}"></script> -->
-    {{ scriptTag | safe }} {% endfor %} {% endif %}
-    <title>{% block title %}{% endblock %}Phawat Suksiriwan</title>
+    <!-- prettier-ignore -->
+    {% if meta.mode == "production" %}
+      {% for cssLink in meta.cssLinks %}
+        {{ cssLink | safe }}
+      {% endfor %}
+      {% for scriptTag in meta.scriptTags %}
+        {{ scriptTag | safe }}
+      {% endfor %}
+    {% endif %}
+    <title>{{ meta.title }}Phawat Suksiriwan</title>
   </head>
   <body>
     <header class="border-b border-b-orange-700">
@@ -306,14 +310,11 @@
         <a href="https://tabler.io/icons">Tabler Icons</a>.
       </span>
     </footer>
+    <!-- prettier-ignore -->
     {% if meta.mode == "development" %}
-    <!-- <script type="module" src="http://localhost:5173/@vite/client"></script>
-    <script type="module" src="http://localhost:5173/main.ts"></script>
-    <script
-      type="module"
-      src="http://localhost:5173/styles/global.css"
-    ></script> -->
-    {% for scriptTag in meta.scriptTags %} {{ scriptTag | safe }} {% endfor %}
+      {% for scriptTag in meta.scriptTags %}
+        {{ scriptTag | safe }}
+      {% endfor %}
     {% endif %}
   </body>
 </html>

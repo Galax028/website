@@ -1,5 +1,6 @@
 import { resolve } from "path";
 import { defineConfig, loadEnv } from "vite";
+import { ViteMinifyPlugin } from "vite-plugin-minify";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
@@ -7,9 +8,8 @@ export default defineConfig(({ mode }) => {
   return {
     publicDir: "../public",
     root: "src",
-    server: {
-      origin: "http://localhost:5173",
-    },
+    plugins: [ViteMinifyPlugin({})],
+    server: { origin: "http://localhost:5173" },
     build: {
       emptyOutDir: true,
       manifest: true,
