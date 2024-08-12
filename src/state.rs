@@ -64,24 +64,25 @@ impl AppState {
         let mut templates_dir = fs::read_dir(&self.config.static_root).await?;
 
         while let Some(file) = templates_dir.next_entry().await? {
-            let filetype = file.file_type().await?;
-            let filename = file.file_name().into_string().unwrap();
-
-            println!("encountered {}", filename);
-            println!("comp {}", filename.eq_ignore_ascii_case(".html"));
+            let file_path = file.path();
+            let file_type = file.file_type().await?;
+            let file_name = file.file_name().into_string().unwrap();
 
             // Iterate over to the next item if the current item is not a HTML file
-            if !(filetype.is_file() && filename.eq_ignore_ascii_case(".html")) {
+            if !(file_type.is_file()
+                && file_path
+                    .extension()
+                    .map_or(false, |ext| ext.eq_ignore_ascii_case("html")))
+            {
                 continue;
             }
 
-            let template = String::from_utf8(fs::read(file.path()).await?).unwrap();
+            let template = String::from_utf8(fs::read(&file_path).await?).unwrap();
             self.templater
-                .add_template_owned(filename, template)
+                .add_template_owned(file_name, template)
                 .unwrap();
         }
 
-        println!("loaded templates");
         Ok(self)
     }
 }

@@ -32,10 +32,10 @@ async fn main() {
         .await
         .expect("Failed to crate a database connection pool");
 
-    // #[cfg(debug_assertions)]
-    // let app_state = AppState::new(config.clone(), pool);
+    #[cfg(debug_assertions)]
+    let app_state = AppState::new(config.clone(), pool);
 
-    // #[cfg(not(debug_assertions))]
+    #[cfg(not(debug_assertions))]
     let app_state = AppState::new(config.clone(), pool)
         .load_templates()
         .await

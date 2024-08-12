@@ -10,6 +10,8 @@ use serde::Deserialize;
 #[cfg(not(debug_assertions))]
 use std::collections::HashMap;
 #[cfg(not(debug_assertions))]
+use std::path::PathBuf;
+#[cfg(not(debug_assertions))]
 use tokio::fs;
 
 #[cfg(not(debug_assertions))]
@@ -41,7 +43,7 @@ pub(crate) struct ErrorTemplateContext {
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct ViteManifestItem {
-    file: String,
+    file: PathBuf,
     #[serde(default)]
     is_entry: bool,
 }
@@ -70,8 +72,19 @@ pub(crate) async fn get_css_links(static_root: &Path) -> Result<Vec<String>, std
 
     Ok(vite_manifest
         .into_values()
-        .filter(|item| item.is_entry && item.file.eq_ignore_ascii_case(".css"))
-        .map(|item| format!(r#"<link rel="stylesheet" href="/{}" />"#, item.file))
+        .filter(|item| {
+            item.is_entry
+                && item
+                    .file
+                    .extension()
+                    .map_or(false, |ext| ext.eq_ignore_ascii_case("css"))
+        })
+        .map(|item| {
+            format!(
+                r#"<link rel="stylesheet" href="/{}" />"#,
+                item.file.display()
+            )
+        })
         .collect())
 }
 
@@ -84,8 +97,19 @@ pub(crate) async fn get_script_tags(static_root: &Path) -> Result<Vec<String>, s
 
     Ok(vite_manifest
         .into_values()
-        .filter(|item| item.is_entry && item.file.eq_ignore_ascii_case(".js"))
-        .map(|item| format!(r#"<script type="module" src="/{}"></script>"#, item.file))
+        .filter(|item| {
+            item.is_entry
+                && item
+                    .file
+                    .extension()
+                    .map_or(false, |ext| ext.eq_ignore_ascii_case("js"))
+        })
+        .map(|item| {
+            format!(
+                r#"<script type="module" src="/{}"></script>"#,
+                item.file.display()
+            )
+        })
         .collect())
 }
 

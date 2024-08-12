@@ -36,7 +36,7 @@ pub(super) async fn render_not_found(
     let context = ErrorTemplateContext {
         meta: TemplateMeta {
             mode: RENDER_MODE,
-            title: "404 Not Found |".to_string(),
+            title: "404 Not Found | ".to_string(),
             css_links: get_css_links(&state.config.static_root).await.unwrap(),
             script_tags: get_script_tags(&state.config.static_root).await.unwrap(),
         },
