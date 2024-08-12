@@ -1,343 +1,39 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script>
-      const currentTheme =
-        localStorage.getItem("theme") ??
-        (window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light");
-
-      if (currentTheme === "dark") {
-        localStorage.setItem("theme", "dark");
-        document.documentElement.classList.add("dark");
-      } else {
-        localStorage.setItem("theme", "light");
-        document.documentElement.classList.remove("dark");
-      }
-    </script>
-    <link rel="stylesheet" href="/styles/global.css" />
-    <link
-      href="/favicon-light-mode.png"
-      rel="icon"
-      media="(prefers-color-scheme: light)"
-    />
-    <link
-      href="/favicon-dark-mode.png"
-      rel="icon"
-      media="(prefers-color-scheme: dark)"
-    />
-    <title>Phawat Suksiriwan</title>
-  </head>
-  <body>
-    <header class="border-b border-b-orange-700">
-      <div class="flex justify-between gap-4">
-        <a class="flex items-center gap-4 text-3xl font-bold" href="/">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            class="min-h-8 min-w-8 duration-300 ease-shake hover:-rotate-90"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path
-              d="M20.118 3h-16.225a2.914 2.914 0 0 0 -2.503 4.371l8.116 13.549a2.917 2.917 0 0 0 4.987 .005l8.11 -13.539a2.914 2.914 0 0 0 -2.486 -4.386z"
-            />
-          </svg>
-          <span class="hidden sm:block">Phawat Suksiriwan</span>
-          <span class="sm:hidden">Phawat S.</span>
-        </a>
-        <button id="mobile-nav-toggle-btn" data-toggled="false">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="icon icon-tabler icons-tabler-outline icon-tabler-menu-2"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M4 6l16 0" />
-            <path d="M4 12l16 0" />
-            <path d="M4 18l16 0" />
-          </svg>
-        </button>
-        <nav class="hidden sm:block">
-          <ul class="flex gap-8">
-            <li><a href="/blog">Blog</a></li>
-            <li><a href="/projects">Projects</a></li>
-            <div class="w-px bg-neutral-600"></div>
-            <li>
-              <button class="theme-toggle-btn">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="28"
-                  height="28"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="light-mode-icon"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <path
-                    d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"
-                  />
-                </svg>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="28"
-                  height="28"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="dark-mode-icon hidden"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
-                  <path
-                    d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"
-                  />
-                </svg>
-              </button>
-            </li>
-          </ul>
-        </nav>
-      </div>
-      <nav class="hidden justify-between pl-12 pt-6">
-        <ul class="flex justify-between gap-8">
-          <li><a href="/blog">Blog</a></li>
-          <li><a href="/projects">Projects</a></li>
-        </ul>
-        <button class="theme-toggle-btn">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="light-mode-icon"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path
-              d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"
-            />
-          </svg>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="dark-mode-icon hidden"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
-            <path
-              d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"
-            />
-          </svg>
-        </button>
-      </nav>
-    </header>
-    <main class="grow">
-      <h1>Hello there!</h1>
-      <p>
-        My name is Phawat Suksiriwan, and welcome to my website. You can also
-        call me by my online handle, Galax. I am a high school student based in
-        Thailand, and I aspire to become a software engineer. I have been
-        interested in computers and software since I was a kid, which led me to
-        start my programming journey in 2020. I am focused on backend web
-        development and I have a keen interest in systems programming. I also
-        love to fiddle with Linux servers, which has led me to practice DevOps
-        and systems administration (although, on a small scale).
-        <br />
-        <br />
-        On this website, you can find my <a href="/blog">blog</a> (which I
-        rarely post, lol), any projects that I have contributed to, and my
-        contacts &ndash; just in case you need to get in touch. Hope you have a
-        nice time!
-      </p>
-      <h1>A little more about me</h1>
-      <p>
-        I started programming with only Python, but now my tools of the trade
-        include many things. I can write Python, Rust, C (amateur), HTML, CSS,
-        JavaScript, and TypeScript. The text editor that I mainly use is Visual
-        Studio Code, but I occasionally use Vim from time to time. I also
-        dual-boot Windows 10 and Arch Linux (btw) on my daily driver. My
-        programming skills were recognised in school by some seniors, and I was
-        recruited to work as a backend web developer for a team that maintains
-        our
-        <a href="https://github.com/suankularb-wittayalai-school">school</a>'s
-        <a href="https://github.com/suankularb-wittayalai-school/mysk-frontend"
-          >internal data management platform</a
-        >! Besides programming, I am also an avid gamer (who mainly plays
-        <a href="https://www.counter-strike.net/cs2">CS2</a>) and a casual
-        <a href="https://en.wikipedia.org/wiki/Audiophile">audiophile</a> who
-        loves to hoard music.
-      </p>
-    </main>
-    <footer class="flex flex-col justify-between border-t border-t-orange-700">
-      <ul>
-        <li class="contact-item">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path
-              d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z"
-            />
-            <path d="M3 7l9 6l9 -6" />
-          </svg>
-          <span>phawat [at] suksiriwan (dot) com</span>
-        </li>
-        <li>
-          <a
-            class="contact-item"
-            href="https://www.linkedin.com/in/phawat-suksiriwan/"
-            target="_blank"
-            noopener
-            noreferrer
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path
-                d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"
-              />
-              <path d="M8 11l0 5" />
-              <path d="M8 8l0 .01" />
-              <path d="M12 16l0 -5" />
-              <path d="M16 16v-3a2 2 0 0 0 -4 0" />
-            </svg>
-            <span>LinkedIn</span>
-          </a>
-        </li>
-        <li>
-          <a
-            class="contact-item"
-            href="https://github.com/Galax028"
-            target="_blank"
-            noopener
-            noreferrer
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path
-                d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"
-              />
-            </svg>
-            <span>Galax028</span>
-          </a>
-        </li>
-        <li class="contact-item">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M8 12a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" />
-            <path d="M14 12a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" />
-            <path
-              d="M15.5 17c0 1 1.5 3 2 3c1.5 0 2.833 -1.667 3.5 -3c.667 -1.667 .5 -5.833 -1.5 -11.5c-1.457 -1.015 -3 -1.34 -4.5 -1.5l-.972 1.923a11.913 11.913 0 0 0 -4.053 0l-.975 -1.923c-1.5 .16 -3.043 .485 -4.5 1.5c-2 5.667 -2.167 9.833 -1.5 11.5c.667 1.333 2 3 3.5 3c.5 0 2 -2 2 -3"
-            />
-            <path d="M7 16.5c3.5 1 6.5 1 10 0" />
-          </svg>
-          <span>galax028</span>
-        </li>
-      </ul>
-      <span class="my-4 text-center">
-        Powered by the Rust
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-          class="duration-300 ease-shake hover:rotate-12"
-        >
-          <g>
-            <path
-              d="M12.0001 1.59863C6.26602 1.59863 1.59912 6.26773 1.59912 11.9996C1.59912 17.7314 6.26822 22.4005 12.0001 22.4005C17.7319 22.4005 22.401 17.7314 22.401 11.9996C22.401 6.26773 17.7319 1.59863 12.0001 1.59863ZM11.9847 2.52277C12.1625 2.52738 12.3315 2.6015 12.4557 2.72934C12.5798 2.85717 12.6492 3.0286 12.6492 3.20707C12.6492 3.38856 12.5771 3.56262 12.4487 3.69095C12.3204 3.81928 12.1464 3.89137 11.9649 3.89137C11.7834 3.89137 11.6093 3.81928 11.481 3.69095C11.3527 3.56262 11.2806 3.38856 11.2806 3.20707C11.2805 3.11552 11.2989 3.02489 11.3345 2.94055C11.3701 2.8562 11.4223 2.77987 11.4879 2.71606C11.5536 2.65225 11.6314 2.60227 11.7167 2.56906C11.802 2.53586 11.8932 2.52012 11.9847 2.52277ZM13.5513 3.64934C14.7526 3.87435 15.8905 4.35816 16.886 5.06718C17.8816 5.7762 18.7108 6.69342 19.3162 7.75515L18.5086 9.57702C18.37 9.89167 18.513 10.2613 18.8255 10.4021L20.3789 11.0908C20.4271 11.5764 20.433 12.0653 20.3965 12.5519H19.5318C19.446 12.5519 19.4108 12.6091 19.4108 12.6927V13.0887C19.4108 14.0217 18.8849 14.2263 18.4228 14.2769C17.9828 14.3275 17.4965 14.0921 17.4349 13.8237C17.1752 12.3648 16.744 12.0546 16.0619 11.5155C16.909 10.9786 17.7891 10.1843 17.7891 9.12376C17.7891 7.97739 17.0036 7.25568 16.4689 6.90142C15.7164 6.40635 14.8847 6.30734 14.6603 6.30734H5.72694C6.9622 4.92738 8.61796 3.99316 10.4378 3.64934L11.4918 4.7539C11.7294 5.00254 12.1233 5.01354 12.3719 4.77371L13.5513 3.64934ZM3.82585 8.71449C4.00389 8.71965 4.1729 8.79401 4.29698 8.92179C4.42106 9.04957 4.49043 9.22069 4.49035 9.3988C4.49035 9.58029 4.41826 9.75434 4.28992 9.88267C4.16159 10.011 3.98754 10.0831 3.80605 10.0831C3.62456 10.0831 3.45051 10.011 3.32218 9.88267C3.19384 9.75434 3.12175 9.58029 3.12175 9.3988C3.12171 9.30724 3.14004 9.21661 3.17567 9.13227C3.21129 9.04793 3.26347 8.97159 3.32913 8.90778C3.39478 8.84398 3.47257 8.79399 3.5579 8.76079C3.64322 8.72759 3.73434 8.71185 3.82585 8.71449ZM20.1413 8.7453C20.3193 8.75045 20.4883 8.82482 20.6124 8.9526C20.7365 9.08037 20.8059 9.25149 20.8058 9.4296C20.8058 9.61109 20.7337 9.78514 20.6054 9.91348C20.477 10.0418 20.303 10.1139 20.1215 10.1139C19.94 10.1139 19.7659 10.0418 19.6376 9.91348C19.5093 9.78514 19.4372 9.61109 19.4372 9.4296C19.4371 9.33805 19.4555 9.24742 19.4911 9.16307C19.5267 9.07873 19.5789 9.0024 19.6446 8.93859C19.7102 8.87478 19.788 8.82479 19.8733 8.79159C19.9587 8.75839 20.0498 8.74265 20.1413 8.7453ZM5.11525 8.85532H6.30782V14.2329H3.90066C3.60337 13.189 3.51073 12.0974 3.62782 11.0182L5.10204 10.3625C5.41669 10.2217 5.55971 9.85427 5.41889 9.53962L5.11525 8.85532ZM10.0924 8.91252H12.933C13.0804 8.91252 13.9694 9.08195 13.9694 9.74865C13.9694 10.3009 13.2873 10.499 12.7262 10.499H10.0902L10.0924 8.91252ZM10.0924 12.7763H12.2685C12.4665 12.7763 13.3313 12.8335 13.6063 13.9381C13.6921 14.2769 13.8836 15.3815 14.0134 15.7357C14.1432 16.1318 14.6691 16.9239 15.2302 16.9239H18.7815C18.5435 17.2427 18.2832 17.5441 18.0026 17.8261L16.557 17.5158C16.2203 17.4432 15.8881 17.6588 15.8154 17.9955L15.4722 19.5973C14.3684 20.0973 13.1697 20.3532 11.958 20.3475C10.7462 20.3418 9.54998 20.0747 8.45094 19.5643L8.10769 17.9625C8.03508 17.6258 7.70503 17.4102 7.36838 17.4828L5.95357 17.7864C5.69102 17.5156 5.44697 17.2275 5.22306 16.9239H12.1035C12.1805 16.9239 12.2333 16.9107 12.2333 16.8381V14.4045C12.2333 14.3341 12.1805 14.3187 12.1035 14.3187H10.0902L10.0924 12.7763ZM6.91731 18.3497C7.09535 18.3549 7.26436 18.4293 7.38844 18.557C7.51252 18.6848 7.58189 18.8559 7.58181 19.034C7.58181 19.2155 7.50972 19.3896 7.38139 19.5179C7.25305 19.6462 7.079 19.7183 6.89751 19.7183C6.71602 19.7183 6.54197 19.6462 6.41364 19.5179C6.28531 19.3896 6.21321 19.2155 6.21321 19.034C6.21317 18.9425 6.23151 18.8518 6.26713 18.7675C6.30275 18.6832 6.35493 18.6068 6.42059 18.543C6.48624 18.4792 6.56404 18.4292 6.64936 18.396C6.73468 18.3628 6.8258 18.3471 6.91731 18.3497ZM17.0498 18.3805C17.2279 18.3857 17.3969 18.4601 17.521 18.5878C17.645 18.7156 17.7144 18.8867 17.7143 19.0648C17.7143 19.2463 17.6422 19.4204 17.5139 19.5487C17.3856 19.677 17.2115 19.7491 17.03 19.7491C16.8485 19.7491 16.6745 19.677 16.5462 19.5487C16.4178 19.4204 16.3457 19.2463 16.3457 19.0648C16.3457 18.9733 16.364 18.8827 16.3996 18.7983C16.4353 18.714 16.4874 18.6376 16.5531 18.5738C16.6188 18.51 16.6965 18.46 16.7819 18.4268C16.8672 18.3936 16.9583 18.3779 17.0498 18.3805Z"
-              fill="currentColor"
-            />
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M21.82 11.9997C21.82 14.6041 20.7854 17.1019 18.9438 18.9435C17.1021 20.7851 14.6044 21.8197 11.9999 21.8197C9.39548 21.8197 6.8977 20.7851 5.05608 18.9435C3.21446 17.1019 2.17985 14.6041 2.17985 11.9997C2.17985 9.39523 3.21446 6.89746 5.05608 5.05584C6.8977 3.21422 9.39548 2.17961 11.9999 2.17961C14.6044 2.17961 17.1021 3.21422 18.9438 5.05584C20.7854 6.89746 21.82 9.39523 21.82 11.9997ZM21.6352 11.0513L23.1666 11.9997L21.6352 12.948L22.951 14.178L21.2655 14.8095L22.3173 16.2727L20.5372 16.5632L21.2853 18.2046L19.4832 18.1408L19.8969 19.8967L18.141 19.483L18.2048 21.2851L16.5634 20.5369L16.273 22.317L14.8097 21.2653L14.1782 22.9507L12.9483 21.6349L11.9999 23.1663L11.0516 21.6349L9.82159 22.9507L9.1901 21.2653L7.72688 22.317L7.43644 20.5369L5.79499 21.2851L5.8588 19.483L4.10294 19.8967L4.5166 18.1408L2.71453 18.2046L3.46264 16.5632L1.68258 16.2727L2.73434 14.8095L1.04888 14.178L2.36468 12.948L0.833252 11.9997L2.36468 11.0513L1.04888 9.82135L2.73434 9.18986L1.68258 7.72664L3.46264 7.43619L2.71453 5.79475L4.5166 5.85856L4.10294 4.1027L5.8588 4.51636L5.79499 2.71429L7.43644 3.4624L7.72688 1.68233L9.1901 2.73409L9.82159 1.04864L11.0516 2.36444L11.9999 0.833008L12.9483 2.36444L14.1782 1.04864L14.8097 2.73409L16.273 1.68233L16.5634 3.4624L18.2048 2.71429L18.141 4.51636L19.8969 4.1027L19.4832 5.85856L21.2853 5.79475L20.5372 7.43619L22.3173 7.72664L21.2655 9.18986L22.951 9.82135L21.6352 11.0513Z"
-              fill="currentColor"
-              stroke="currentColor"
-              stroke-width="0.660098"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </g>
-        </svg>
-        programming language 🚀&nbsp;🚀
-      </span>
-      <span class="copyright">
-        Copyright &copy; 2024 Phawat Suksiriwan. The source code for this
-        website is licensed under
-        <a href="https://www.gnu.org/licenses/agpl-3.0.en.html">AGPL-3.0</a> and
-        is available on
-        <a href="https://github.com/Galax028/website">GitHub</a>. Icons by
-        <a href="https://tabler.io/icons">Tabler Icons</a>.
-      </span>
-    </footer>
-    <script type="module" src="/main.ts"></script>
-  </body>
-</html>
+<!-- prettier-ignore -->
+{% extends "document.html" %}
+{% block main %}
+<main class="grow">
+  <h1>Hello there!</h1>
+  <p>
+    My name is Phawat Suksiriwan, and welcome to my website. You can also call
+    me by my online handle, Galax. I am a high school student based in Thailand,
+    and I aspire to become a software engineer. I have been interested in
+    computers and software since I was a kid, which led me to start my
+    programming journey in 2020. I am focused on backend web development and I
+    have a keen interest in systems programming. I also love to fiddle with
+    Linux servers, which has led me to practice DevOps and systems
+    administration (although, on a small scale).
+    <br />
+    <br />
+    On this website, you can find my <a href="/blog">blog</a> (which I rarely
+    post, lol), any projects that I have contributed to, and my contacts &ndash;
+    just in case you need to get in touch. Hope you have a nice time!
+  </p>
+  <h1>A little more about me</h1>
+  <p>
+    I started programming with only Python, but now my tools of the trade
+    include many things. I can write Python, Rust, C (amateur), HTML, CSS,
+    JavaScript, and TypeScript. The text editor that I mainly use is Visual
+    Studio Code, but I occasionally use Vim from time to time. I also dual-boot
+    Windows 10 and Arch Linux (btw) on my daily driver. My programming skills
+    were recognised in school by some seniors, and I was recruited to work as a
+    backend web developer for a team that maintains our
+    <a href="https://github.com/suankularb-wittayalai-school">school</a>'s
+    <a href="https://github.com/suankularb-wittayalai-school/mysk-frontend"
+      >internal data management platform</a
+    >! Besides programming, I am also an avid gamer (who mainly plays
+    <a href="https://www.counter-strike.net/cs2">CS2</a>) and a casual
+    <a href="https://en.wikipedia.org/wiki/Audiophile">audiophile</a> who loves
+    to hoard music.
+  </p>
+</main>
+{% endblock %}

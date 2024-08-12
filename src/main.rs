@@ -2,22 +2,19 @@
 
 mod config;
 mod routes;
+mod state;
+mod templating;
 
 use axum::Router;
-use config::AppConfig;
 use http::{header, Method};
-use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePool, SqlitePoolOptions};
+use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePoolOptions};
 use std::{str::FromStr, time::Duration};
 use tokio::net::TcpListener;
 use tower::ServiceBuilder;
 use tower_http::{cors::CorsLayer, normalize_path::NormalizePathLayer};
 
-/// Global state for the application.
-#[derive(Clone, Debug)]
-pub(crate) struct AppState {
-    config: AppConfig,
-    pool: SqlitePool,
-}
+pub(crate) use config::AppConfig;
+pub(crate) use state::AppState;
 
 #[tokio::main]
 async fn main() {
@@ -35,12 +32,18 @@ async fn main() {
         .await
         .expect("Failed to crate a database connection pool");
 
+    #[cfg(debug_assertions)]
+    let app_state = AppState::new(config.clone(), pool);
+
+    #[cfg(not(debug_assertions))]
+    let app_state = AppState::new(config.clone(), pool)
+        .load_templates()
+        .await
+        .expect("Failed to load templates");
+
     let app = Router::new()
         .merge(routes::register(&config.static_root))
-        .with_state(AppState {
-            config: config.clone(),
-            pool,
-        })
+        .with_state(app_state)
         .layer(
             ServiceBuilder::new()
                 .layer(NormalizePathLayer::trim_trailing_slash())
