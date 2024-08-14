@@ -1,10 +1,5 @@
+#![forbid(unsafe_code)]
 #![warn(clippy::pedantic)]
-
-pub(crate) mod config;
-pub(crate) mod error;
-pub(crate) mod routes;
-pub(crate) mod state;
-pub(crate) mod templating;
 
 use anyhow::{Context, Result};
 use axum::Router;
@@ -14,9 +9,7 @@ use std::{str::FromStr, time::Duration};
 use tokio::{net::TcpListener, signal};
 use tower::ServiceBuilder;
 use tower_http::{cors::CorsLayer, normalize_path::NormalizePathLayer};
-
-pub(crate) use config::AppConfig;
-pub(crate) use state::AppState;
+use website::{register_routes, AppConfig, AppState};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -44,7 +37,7 @@ async fn main() -> Result<()> {
         .context("Failed to load templates")?;
 
     let app = Router::new()
-        .merge(routes::register(&config.static_root))
+        .merge(register_routes(&config.static_root))
         .with_state(app_state)
         .layer(
             ServiceBuilder::new()

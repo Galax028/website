@@ -17,6 +17,26 @@ use tokio::fs;
 #[cfg(not(debug_assertions))]
 use minijinja::Environment as JinjaEnvironment;
 
+#[cfg(debug_assertions)]
+static RENDER_MODE: &str = "development";
+
+#[cfg(not(debug_assertions))]
+static RENDER_MODE: &str = "production";
+
+pub(crate) enum Template {
+    Index,
+    Error,
+}
+
+impl From<Template> for &str {
+    fn from(template: Template) -> Self {
+        match template {
+            Template::Index => "index.html",
+            Template::Error => "error.html",
+        }
+    }
+}
+
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub(crate) struct TemplateMeta {
@@ -24,6 +44,19 @@ pub(crate) struct TemplateMeta {
     pub title: String,
     pub css_links: Vec<String>,
     pub script_tags: Vec<String>,
+}
+
+impl TemplateMeta {
+    pub(crate) async fn generate<P: AsRef<Path>>(title: &str, static_root: P) -> Result<Self> {
+        let static_root = static_root.as_ref();
+
+        Ok(TemplateMeta {
+            mode: RENDER_MODE,
+            title: title.to_string(),
+            css_links: get_css_links(static_root).await?,
+            script_tags: get_script_tags(static_root).await?,
+        })
+    }
 }
 
 #[derive(Serialize)]
@@ -49,12 +82,12 @@ struct ViteManifestItem {
 }
 
 #[cfg(debug_assertions)]
-pub(crate) async fn get_css_links(_: &Path) -> Result<Vec<String>> {
+async fn get_css_links<P: AsRef<Path>>(_: P) -> Result<Vec<String>> {
     Ok(Vec::new())
 }
 
 #[cfg(debug_assertions)]
-pub(crate) async fn get_script_tags(_: &Path) -> Result<Vec<String>> {
+async fn get_script_tags<P: AsRef<Path>>(_: P) -> Result<Vec<String>> {
     Ok(["@vite/client", "main.ts", "styles/global.css"]
         .iter()
         .map(|s| format!(r#"<script type="module" src="http://localhost:5173/{s}"></script>"#))
@@ -62,7 +95,8 @@ pub(crate) async fn get_script_tags(_: &Path) -> Result<Vec<String>> {
 }
 
 #[cfg(not(debug_assertions))]
-pub(crate) async fn get_css_links(static_root: &Path) -> Result<Vec<String>> {
+async fn get_css_links<P: AsRef<Path>>(static_root: P) -> Result<Vec<String>> {
+    let static_root = static_root.as_ref();
     let manifest_raw = fs::read_to_string(static_root.join(".vite/manifest.json")).await?;
     let vite_manifest = serde_json::from_str::<HashMap<String, ViteManifestItem>>(&manifest_raw)?;
 
@@ -85,7 +119,8 @@ pub(crate) async fn get_css_links(static_root: &Path) -> Result<Vec<String>> {
 }
 
 #[cfg(not(debug_assertions))]
-pub(crate) async fn get_script_tags(static_root: &Path) -> Result<Vec<String>> {
+async fn get_script_tags<P: AsRef<Path>>(static_root: P) -> Result<Vec<String>> {
+    let static_root = static_root.as_ref();
     let manifest_raw = fs::read_to_string(static_root.join(".vite/manifest.json")).await?;
     let vite_manifest = serde_json::from_str::<HashMap<String, ViteManifestItem>>(&manifest_raw)?;
 
@@ -108,30 +143,24 @@ pub(crate) async fn get_script_tags(static_root: &Path) -> Result<Vec<String>> {
 }
 
 #[cfg(debug_assertions)]
-pub(crate) fn render_template<C>(
+pub(crate) fn render_template<C: Serialize>(
     templater: &JinjaAutoReloader,
-    name: &str,
+    name: Template,
     context: C,
-) -> Result<String>
-where
-    C: Serialize,
-{
+) -> Result<String> {
     let templater = templater.acquire_env()?;
-    let template = templater.get_template(&format!("{name}.html"))?;
+    let template = templater.get_template(name.into())?;
 
     Ok(template.render(context)?)
 }
 
 #[cfg(not(debug_assertions))]
-pub(crate) fn render_template<C>(
+pub(crate) fn render_template<C: Serialize>(
     templater: &JinjaEnvironment<'static>,
     name: &str,
     context: C,
-) -> Result<String>
-where
-    C: Serialize,
-{
-    let template = templater.get_template(&format!("{name}.html"))?;
+) -> Result<String> {
+    let template = templater.get_template(name.into())?;
 
     Ok(template.render(context)?)
 }

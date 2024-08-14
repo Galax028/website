@@ -5,7 +5,7 @@ use std::{env::var, fs, net::IpAddr, path::PathBuf};
 
 /// Global configuration options for the application.
 #[derive(Clone)]
-pub(crate) struct AppConfig {
+pub struct AppConfig {
     pub cors_origins: Vec<HeaderValue>,
     pub database_url: String,
     pub host: IpAddr,

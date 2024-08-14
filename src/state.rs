@@ -16,7 +16,7 @@ use tokio::fs;
 #[cfg(debug_assertions)]
 /// Global state for the application.
 #[derive(Clone)]
-pub(crate) struct AppState {
+pub struct AppState {
     pub config: AppConfig,
     #[allow(dead_code)] // TODO: Remove later when pool gets used.
     pub pool: SqlitePool,
@@ -26,7 +26,7 @@ pub(crate) struct AppState {
 #[cfg(debug_assertions)]
 impl AppState {
     /// Creates a new `AppState`.
-    pub(crate) fn new(config: AppConfig, pool: SqlitePool) -> Self {
+    pub fn new(config: AppConfig, pool: SqlitePool) -> Self {
         AppState {
             config,
             pool,
@@ -46,7 +46,7 @@ impl AppState {
 #[cfg(not(debug_assertions))]
 /// Global state for the application.
 #[derive(Clone)]
-pub(crate) struct AppState {
+pub struct AppState {
     pub config: AppConfig,
     #[allow(dead_code)] // TODO: Remove later when pool gets used.
     pub pool: SqlitePool,
@@ -56,7 +56,7 @@ pub(crate) struct AppState {
 #[cfg(not(debug_assertions))]
 impl AppState {
     /// Creates a new `AppState`.
-    pub(crate) fn new(config: AppConfig, pool: SqlitePool) -> Self {
+    pub fn new(config: AppConfig, pool: SqlitePool) -> Self {
         AppState {
             config,
             pool,
@@ -65,7 +65,7 @@ impl AppState {
     }
 
     /// Load Jinja templates into the templater.
-    pub(crate) async fn load_templates(mut self) -> Result<Self> {
+    pub async fn load_templates(mut self) -> Result<Self> {
         let mut templates_dir = fs::read_dir(&self.config.static_root).await?;
 
         while let Some(file) = templates_dir.next_entry().await? {

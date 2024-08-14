@@ -1,45 +1,49 @@
+use std::path::Path;
+
 use crate::{
     error::HandlerResult,
-    templating::{
-        self, get_css_links, get_script_tags, ErrorTemplateContext, IndexTemplateContext,
-        TemplateMeta,
-    },
+    templating::{self, ErrorTemplateContext, IndexTemplateContext, Template, TemplateMeta},
     AppState,
 };
-use axum::{extract::State, response::Html};
+use axum::{extract::State, response::Html, routing::get, Router};
+use tower_http::services::{ServeDir, ServeFile};
 
-#[cfg(debug_assertions)]
-static RENDER_MODE: &str = "development";
+pub(super) fn register<P: AsRef<Path>>(static_root: P) -> Router<AppState> {
+    let static_root = static_root.as_ref();
 
-#[cfg(not(debug_assertions))]
-static RENDER_MODE: &str = "production";
+    Router::new()
+        .route("/", get(render_index))
+        .route_service(
+            "/favicon-dark-mode.png",
+            ServeFile::new(static_root.join("favicon-dark-mode.png")),
+        )
+        .route_service(
+            "/favicon-light-mode.png",
+            ServeFile::new(static_root.join("favicon-light-mode.png")),
+        )
+        .route_service(
+            "/robots.txt",
+            ServeFile::new(static_root.join("robots.txt")),
+        )
+        .nest_service("/assets", ServeDir::new(static_root.join("assets")))
+}
 
-pub(super) async fn render_index(State(state): State<AppState>) -> HandlerResult<Html<String>> {
+async fn render_index(State(state): State<AppState>) -> HandlerResult<Html<String>> {
     let context = IndexTemplateContext {
-        meta: TemplateMeta {
-            mode: RENDER_MODE,
-            title: String::default(),
-            css_links: get_css_links(&state.config.static_root).await?,
-            script_tags: get_script_tags(&state.config.static_root).await?,
-        },
+        meta: TemplateMeta::generate("", &state.config.static_root).await?,
     };
-    let result = templating::render_template(&state.templater, "index", context)?;
+    let result = templating::render_template(&state.templater, Template::Index, context)?;
 
     Ok(Html(result))
 }
 
 pub(super) async fn render_not_found(State(state): State<AppState>) -> HandlerResult<Html<String>> {
     let context = ErrorTemplateContext {
-        meta: TemplateMeta {
-            mode: RENDER_MODE,
-            title: "404 Not Found | ".to_string(),
-            css_links: get_css_links(&state.config.static_root).await?,
-            script_tags: get_script_tags(&state.config.static_root).await?,
-        },
+        meta: TemplateMeta::generate("404 Not Found | ", &state.config.static_root).await?,
         error_code: 404,
         error_description: "Not Found ¯\\_(ツ)_/¯".to_string(),
     };
-    let result = templating::render_template(&state.templater, "error", context)?;
+    let result = templating::render_template(&state.templater, Template::Error, context)?;
 
     Ok(Html(result))
 }
