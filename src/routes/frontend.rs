@@ -1,11 +1,14 @@
-use std::path::Path;
-
 use crate::{
     error::HandlerResult,
-    templating::{self, ErrorTemplateContext, IndexTemplateContext, Template, TemplateMeta},
+    models::projects::Project,
+    templating::{
+        self, ErrorTemplateContext, IndexTemplateContext, ProjectsTemplateContext, Template,
+        TemplateMeta,
+    },
     AppState,
 };
 use axum::{extract::State, response::Html, routing::get, Router};
+use std::{collections::HashSet, path::Path};
 use tower_http::services::{ServeDir, ServeFile};
 
 pub(super) fn register<P: AsRef<Path>>(static_root: P) -> Router<AppState> {
@@ -39,8 +42,15 @@ async fn render_index(State(state): State<AppState>) -> HandlerResult<Html<Strin
 }
 
 async fn render_projects(State(state): State<AppState>) -> HandlerResult<Html<String>> {
-    let context = IndexTemplateContext {
-        meta: TemplateMeta::generate("Projects | ", &state.config.static_root).await?,
+    let context = ProjectsTemplateContext {
+        meta: TemplateMeta::generate_with_non_direct_deps(
+            "Projects | ",
+            &state.config.static_root,
+            HashSet::from(["styles/projects.css"]),
+            HashSet::default(),
+        )
+        .await?,
+        projects: Project::get_all_projects(&state.pool).await.unwrap(),
     };
     let result = templating::render_template(&state.templater, Template::Projects, context)?;
 

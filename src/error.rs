@@ -4,8 +4,10 @@ use axum::{
 };
 use http::StatusCode;
 use serde::Serialize;
-use std::error::Error;
 use thiserror::Error;
+
+#[cfg(debug_assertions)]
+use std::error::Error as _;
 
 pub(crate) type HandlerResult<T> = Result<T, AppError>;
 
@@ -38,6 +40,7 @@ impl AppError {
     }
 }
 
+// TODO: Wrong configuration
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
         (

@@ -10,14 +10,14 @@ publish = false
 [dependencies]
 anyhow = "1.0.86"
 axum = { version = "0.7.5", features = ["macros"] }
-chrono = "0.4.38"
+chrono = { version = "0.4.38", features = ["serde"] }
 dotenvy = "0.15.7"
 http = "1.1.0"
 minijinja = { version = "2.1.2", features = ["loader"] }
 minijinja-autoreload = "2.1.2"
 serde = { version = "1.0.205", features = ["derive"] }
 serde_json = "1.0.122"
-sqlx = { version = "0.7.4", features = ["runtime-tokio", "sqlite", "uuid"] }
+sqlx = { version = "0.7.4", features = ["chrono", "runtime-tokio", "sqlite", "uuid"] }
 thiserror = "1.0.63"
 tokio = { version = "1.39.2", features = [
     "tokio-macros",
@@ -29,3 +29,8 @@ tokio = { version = "1.39.2", features = [
 tower = "0.4.13"
 tower-http = { version = "0.5.2", features = ["cors", "fs", "normalize-path"] }
 uuid = { version = "1.10.0", features = ["serde", "v4"] }
+
+[profile.release-with-debug]
+inherits = "release"
+debug = true
+debug-assertions = false

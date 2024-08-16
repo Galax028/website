@@ -1,10 +1,10 @@
-use chrono::{DateTime, Utc};
-use sqlx::{prelude::FromRow, query, SqlitePool};
-use uuid::Uuid;
-
 use super::ModelResult;
+use chrono::{DateTime, Utc};
+use serde::Serialize;
+use sqlx::{prelude::FromRow, query, query_as, SqlitePool};
+use uuid::{fmt::Hyphenated, Uuid};
 
-#[derive(FromRow)]
+#[derive(FromRow, Serialize)]
 pub(crate) struct Project {
     pub id: Uuid,
     pub created_at: DateTime<Utc>,
@@ -17,7 +17,7 @@ pub(crate) struct Project {
 }
 
 impl Project {
-    async fn create(
+    pub(crate) async fn create(
         pool: &SqlitePool,
         name: &str,
         description: &str,
@@ -42,5 +42,24 @@ impl Project {
         .await?;
 
         Ok(())
+    }
+
+    pub(crate) async fn get_all_projects(pool: &SqlitePool) -> ModelResult<Vec<Self>> {
+        query_as!(
+            Self,
+            r#"
+            SELECT id AS "id: Hyphenated",
+                created_at AS "created_at: _",
+                updated_at AS "updated_at: _",
+                name,
+                description,
+                starred AS "starred: _",
+                showcase,
+                repository
+            FROM project
+            "#
+        )
+        .fetch_all(pool)
+        .await
     }
 }

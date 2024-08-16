@@ -1,5 +1,4 @@
 use crate::AppConfig;
-
 use minijinja::Environment as JinjaEnvironment;
 use sqlx::SqlitePool;
 
@@ -18,7 +17,6 @@ use tokio::fs;
 #[derive(Clone)]
 pub struct AppState {
     pub config: AppConfig,
-    #[allow(dead_code)] // TODO: Remove later when pool gets used.
     pub pool: SqlitePool,
     pub templater: Arc<JinjaAutoReloader>,
 }
@@ -48,7 +46,6 @@ impl AppState {
 #[derive(Clone)]
 pub struct AppState {
     pub config: AppConfig,
-    #[allow(dead_code)] // TODO: Remove later when pool gets used.
     pub pool: SqlitePool,
     pub templater: JinjaEnvironment<'static>,
 }

@@ -315,6 +315,7 @@
       {% for scriptTag in meta.scriptTags %}
         {{ scriptTag | safe }}
       {% endfor %}
+      {% block devDependencies %}{% endblock %}
     {% endif %}
   </body>
 </html>

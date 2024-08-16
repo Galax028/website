@@ -1,5 +1,3 @@
-import "vite/modulepreload-polyfill";
-
 type Theme = "dark" | "light";
 
 /**
