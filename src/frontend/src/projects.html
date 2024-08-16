@@ -1,0 +1,54 @@
+<!-- prettier-ignore -->
+{% extends "document.html" %}
+{% block main %}
+<main class="grow">
+  <h1>Projects</h1>
+  <p>
+    These are <b>software/programming</b> projects (and side-projects) that I
+    have previously or actively contributed to! Please note that this list may
+    be <i>non-comprehensive</i>.
+  </p>
+  <section class="grid grid-cols-1 gap-8 p-2 sm:grid-cols-2">
+    <div class="">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xl font-bold">Website</h3>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          class="mr-4"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path
+            d="M8.243 7.34l-6.38 .925l-.113 .023a1 1 0 0 0 -.44 1.684l4.622 4.499l-1.09 6.355l-.013 .11a1 1 0 0 0 1.464 .944l5.706 -3l5.693 3l.1 .046a1 1 0 0 0 1.352 -1.1l-1.091 -6.355l4.624 -4.5l.078 -.085a1 1 0 0 0 -.633 -1.62l-6.38 -.926l-2.852 -5.78a1 1 0 0 0 -1.794 0l-2.853 5.78z"
+          />
+        </svg>
+      </div>
+      <p>
+        It's the website that you're currently on! It is also my first personal
+        side-project to use Rust as the backend language.
+      </p>
+      <ul class="mt-4 flex items-end justify-end gap-8">
+        <li>
+          <a
+            class="text-neutral-600 hover:text-neutral-950 hover:dark:text-neutral-50"
+            href="https://suksiriwan.com"
+          >
+            View Project
+          </a>
+        </li>
+        <li>
+          <a
+            class="text-neutral-600 hover:text-neutral-950 hover:dark:text-neutral-50"
+            href="https://github.com/Galax028/website"
+          >
+            View Repository
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+</main>
+{% endblock %}

@@ -25,6 +25,7 @@ static RENDER_MODE: &str = "production";
 
 pub(crate) enum Template {
     Index,
+    Projects,
     Error,
 }
 
@@ -32,6 +33,7 @@ impl From<Template> for &str {
     fn from(template: Template) -> Self {
         match template {
             Template::Index => "index.html",
+            Template::Projects => "projects.html",
             Template::Error => "error.html",
         }
     }

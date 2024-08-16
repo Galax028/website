@@ -13,6 +13,7 @@ pub(super) fn register<P: AsRef<Path>>(static_root: P) -> Router<AppState> {
 
     Router::new()
         .route("/", get(render_index))
+        .route("/projects", get(render_projects))
         .route_service(
             "/favicon-dark-mode.png",
             ServeFile::new(static_root.join("favicon-dark-mode.png")),
@@ -33,6 +34,15 @@ async fn render_index(State(state): State<AppState>) -> HandlerResult<Html<Strin
         meta: TemplateMeta::generate("", &state.config.static_root).await?,
     };
     let result = templating::render_template(&state.templater, Template::Index, context)?;
+
+    Ok(Html(result))
+}
+
+async fn render_projects(State(state): State<AppState>) -> HandlerResult<Html<String>> {
+    let context = IndexTemplateContext {
+        meta: TemplateMeta::generate("Projects | ", &state.config.static_root).await?,
+    };
+    let result = templating::render_template(&state.templater, Template::Projects, context)?;
 
     Ok(Html(result))
 }

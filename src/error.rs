@@ -11,8 +11,14 @@ pub(crate) type HandlerResult<T> = Result<T, AppError>;
 
 #[derive(Error, Debug)]
 pub(crate) enum AppError {
+    #[error("Not Found")]
+    NotFound,
+
     #[error("Internal Server Error")]
-    InternalServerError(#[from] anyhow::Error),
+    Sqlx(#[from] sqlx::Error),
+
+    #[error("Internal Server Error")]
+    Anyhow(#[from] anyhow::Error),
 }
 
 #[derive(Serialize)]
@@ -25,7 +31,9 @@ pub(crate) struct AppErrorResponse {
 impl AppError {
     fn status_code(&self) -> u16 {
         match self {
-            AppError::InternalServerError(_) => 500,
+            AppError::NotFound => 404,
+            AppError::Sqlx(_) => 500,
+            AppError::Anyhow(_) => 500,
         }
     }
 }
