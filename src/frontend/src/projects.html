@@ -51,7 +51,7 @@
               d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"
             />
           </svg>
-          <a href="{{ project.showcase }}" target="_blank" noopener noreferrer
+          <a href="{{ project.showcase }}" target="_blank" rel="noreferrer"
             >View Project</a
           >
         </li>
@@ -79,7 +79,7 @@
               d="M13.446 2.6l7.955 7.954a2.045 2.045 0 0 1 0 2.892l-7.955 7.955a2.045 2.045 0 0 1 -2.892 0l-7.955 -7.955a2.045 2.045 0 0 1 0 -2.892l7.955 -7.955a2.045 2.045 0 0 1 2.892 0z"
             />
           </svg>
-          <a href="{{ project.repository }}" target="_blank" noopener noreferrer
+          <a href="{{ project.repository }}" target="_blank" rel="noreferrer"
             >View Repository</a
           >
         </li>
@@ -90,7 +90,10 @@
 </main>
 <!-- prettier-ignore -->
 {% endblock %}
-{% block devDependencies %} {% set dependencies = ["styles/projects.css"] %}
+{% block devDependencies %}
+{% set dependencies = ["styles/projects.css"] %}
 {% for dependency in dependencies %}
 <script type="module" src="http://localhost:5173/{{ dependency }}"></script>
-{% endfor %} {% endblock %}
+<!-- prettier-ignore -->
+{% endfor %}
+{% endblock %}

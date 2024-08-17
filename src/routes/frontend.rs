@@ -1,6 +1,6 @@
 use crate::{
     error::HandlerResult,
-    models::projects::Project,
+    models::{blog::Blog, project::Project},
     templating::{
         self, ErrorTemplateContext, IndexTemplateContext, ProjectsTemplateContext, Template,
         TemplateMeta,
@@ -35,6 +35,7 @@ pub(super) fn register<P: AsRef<Path>>(static_root: P) -> Router<AppState> {
 async fn render_index(State(state): State<AppState>) -> HandlerResult<Html<String>> {
     let context = IndexTemplateContext {
         meta: TemplateMeta::generate("", &state.config.static_root).await?,
+        recent_posts: Blog::get_recent_blogs(&state.pool).await?,
     };
     let result = templating::render_template(&state.templater, Template::Index, context)?;
 
@@ -50,7 +51,7 @@ async fn render_projects(State(state): State<AppState>) -> HandlerResult<Html<St
             HashSet::default(),
         )
         .await?,
-        projects: Project::get_all_projects(&state.pool).await.unwrap(),
+        projects: Project::get_all_projects(&state.pool).await?,
     };
     let result = templating::render_template(&state.templater, Template::Projects, context)?;
 
