@@ -1,3 +1,4 @@
+use crate::models::{blog::RecentBlog, project::Project};
 use anyhow::Result;
 use serde::Serialize;
 use std::collections::HashSet;
@@ -19,8 +20,6 @@ use tokio::fs;
 
 #[cfg(not(debug_assertions))]
 use minijinja::Environment as JinjaEnvironment;
-
-use crate::models::projects::Project;
 
 #[cfg(debug_assertions)]
 static RENDER_MODE: &str = "development";
@@ -107,8 +106,10 @@ impl TemplateMeta {
 }
 
 #[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub(crate) struct IndexTemplateContext {
     pub meta: TemplateMeta,
+    pub recent_posts: Vec<RecentBlog>,
 }
 
 #[derive(Serialize)]
