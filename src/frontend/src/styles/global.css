@@ -64,7 +64,7 @@ main h2 {
 }
 
 main p {
-  @apply pb-8 text-lg leading-6 last:pb-0;
+  @apply pb-8 text-lg leading-6;
 }
 
 main a {
