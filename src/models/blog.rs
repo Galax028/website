@@ -1,10 +1,10 @@
-use super::ModelResult;
-use chrono::{DateTime, Datelike, Utc};
+use crate::{models::ModelResult, utils::format_short_date};
+use chrono::{DateTime, Utc};
 use serde::Serialize;
 use sqlx::{prelude::FromRow, query, SqlitePool};
 use uuid::Uuid;
 
-#[derive(FromRow, Serialize)]
+#[derive(Debug, FromRow, Serialize)]
 pub(crate) struct Blog {
     pub id: Uuid,
     pub created_at: DateTime<Utc>,
@@ -24,7 +24,7 @@ pub(crate) struct RecentBlog {
 
 impl Blog {
     pub(crate) async fn get_recent_blogs(pool: &SqlitePool) -> ModelResult<Vec<RecentBlog>> {
-        let res = query!(
+        Ok(query!(
             r#"
             SELECT
                 updated_at AS "updated_at: DateTime<Utc>",
@@ -35,27 +35,13 @@ impl Blog {
             "#
         )
         .fetch_all(pool)
-        .await?;
-        let res = res
-            .into_iter()
-            .map(|blog| RecentBlog {
-                updated_at: Self::format_date(blog.updated_at),
-                title: blog.title,
-                slug: blog.slug,
-            })
-            .collect();
-
-        Ok(res)
-    }
-
-    fn format_date(date: DateTime<Utc>) -> String {
-        let day = match date.day() {
-            day @ (1 | 21 | 31) => format!("{day:02}st"),
-            day @ (2 | 22) => format!("{day:02}nd"),
-            day @ (3 | 23) => format!("{day:02}rd"),
-            day @ (1..=31) => format!("{day:02}th"),
-            _ => unreachable!(),
-        };
-        format!("{} {}", day, date.format("%b. %Y"))
+        .await?
+        .into_iter()
+        .map(|blog| RecentBlog {
+            updated_at: format_short_date(blog.updated_at),
+            title: blog.title,
+            slug: blog.slug,
+        })
+        .collect())
     }
 }

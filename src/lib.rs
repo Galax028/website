@@ -7,6 +7,7 @@ pub(crate) mod models;
 pub(crate) mod routes;
 pub(crate) mod state;
 pub(crate) mod templating;
+pub(crate) mod utils;
 
 pub use config::Config;
 pub use routes::root;

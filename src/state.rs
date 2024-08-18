@@ -67,9 +67,9 @@ impl AppState {
         }
     }
 
-    /// Load Jinja templates into the templater.
     #[allow(clippy::missing_errors_doc, clippy::missing_panics_doc)]
     #[tracing::instrument(level = "info", skip(self))]
+    /// Load Jinja templates into the templater.
     pub async fn load_templates(mut self) -> Result<Self> {
         let mut templates_dir = fs::read_dir(&self.config.static_root).await?;
 

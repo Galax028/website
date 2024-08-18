@@ -50,11 +50,11 @@ impl Project {
             Self,
             r#"
             SELECT id AS "id: Hyphenated",
-                created_at AS "created_at: _",
-                updated_at AS "updated_at: _",
+                created_at AS "created_at: DateTime<Utc>",
+                updated_at AS "updated_at: DateTime<Utc>",
                 name,
                 description,
-                starred AS "starred: _",
+                starred AS "starred: bool",
                 showcase,
                 repository
             FROM project
