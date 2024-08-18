@@ -1,3 +1,4 @@
+use crate::models::Pagination;
 use crate::models::{blog::RecentBlog, project::Project};
 use anyhow::Result;
 use serde::Serialize;
@@ -57,6 +58,7 @@ pub(crate) struct TemplateMeta {
     pub title: String,
     pub css_links: Vec<String>,
     pub script_tags: Vec<String>,
+    pub pagination: Option<Pagination>,
 }
 
 impl TemplateMeta {
@@ -68,6 +70,7 @@ impl TemplateMeta {
             title: title.to_string(),
             css_links: get_css_links(static_root).await?,
             script_tags: get_script_tags(static_root).await?,
+            pagination: None,
         })
     }
 
@@ -104,7 +107,14 @@ impl TemplateMeta {
                 get_non_direct_script_tags(static_root, js_deps).await?,
             ]
             .concat(),
+            pagination: None,
         })
+    }
+
+    pub(crate) fn with_pagination(mut self, pagination: Pagination) -> Self {
+        self.pagination = Some(pagination);
+
+        self
     }
 }
 

@@ -49,7 +49,8 @@ impl Project {
         query_as!(
             Self,
             r#"
-            SELECT id AS "id: Hyphenated",
+            SELECT
+                id AS "id: Hyphenated",
                 created_at AS "created_at: DateTime<Utc>",
                 updated_at AS "updated_at: DateTime<Utc>",
                 name,
