@@ -89,7 +89,8 @@ impl AppState {
             }
 
             let template = String::from_utf8(fs::read(&file_path).await?)?;
-            self.templater.add_template_owned(file_name.clone(), template)?;
+            self.templater
+                .add_template_owned(file_name.clone(), template)?;
             info!("loaded template {}", file_name);
         }
 
