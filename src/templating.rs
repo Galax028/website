@@ -6,6 +6,8 @@ use std::path::Path;
 
 #[cfg(debug_assertions)]
 use minijinja_autoreload::AutoReloader as JinjaAutoReloader;
+#[cfg(debug_assertions)]
+use tracing::info;
 
 #[cfg(not(debug_assertions))]
 use serde::Deserialize;
@@ -31,6 +33,7 @@ static RENDER_MODE: &str = "production";
 static DIRECT_DEPS: LazyLock<HashSet<&str>> =
     LazyLock::new(|| HashSet::from(["main.ts", "styles/global.css"]));
 
+#[derive(Debug)]
 pub(crate) enum Template {
     Index,
     Projects,
@@ -47,7 +50,7 @@ impl From<Template> for &str {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub(crate) struct TemplateMeta {
     pub mode: &'static str,
@@ -105,20 +108,20 @@ impl TemplateMeta {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub(crate) struct IndexTemplateContext {
     pub meta: TemplateMeta,
     pub recent_posts: Vec<RecentBlog>,
 }
 
-#[derive(Serialize)]
+#[derive(Debug, Serialize)]
 pub(crate) struct ProjectsTemplateContext {
     pub meta: TemplateMeta,
     pub projects: Vec<Project>,
 }
 
-#[derive(Serialize)]
+#[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub(crate) struct ErrorTemplateContext {
     pub meta: TemplateMeta,
@@ -154,57 +157,55 @@ async fn get_script_tags<P: AsRef<Path>>(static_root: P) -> Result<Vec<String>> 
 #[cfg(not(debug_assertions))]
 async fn vite_manifest_filter<P, F>(
     static_root: P,
+    file_extension: &'static str,
     predicate: F,
 ) -> Result<impl Iterator<Item = ViteManifestItem>>
 where
     P: AsRef<Path>,
-    F: FnMut(&ViteManifestItem) -> bool,
+    F: Fn(&ViteManifestItem) -> bool,
 {
     let static_root = static_root.as_ref();
     let manifest_raw = fs::read_to_string(static_root.join(".vite/manifest.json")).await?;
     let vite_manifest = serde_json::from_str::<HashMap<String, ViteManifestItem>>(&manifest_raw)?;
 
-    Ok(vite_manifest.into_values().filter(predicate))
+    Ok(vite_manifest.into_values().filter(move |item| {
+        item.is_entry
+            && item
+                .file
+                .extension()
+                .map_or(false, |ext| ext.eq_ignore_ascii_case(file_extension))
+            && predicate(item)
+    }))
 }
 
 #[cfg(not(debug_assertions))]
 async fn get_css_links<P: AsRef<Path>>(static_root: P) -> Result<Vec<String>> {
-    Ok(vite_manifest_filter(static_root, |item| {
-        item.is_entry
-            && item
-                .file
-                .extension()
-                .map_or(false, |ext| ext.eq_ignore_ascii_case("css"))
-            && DIRECT_DEPS.contains(&*item.src)
-    })
-    .await?
-    .map(|item| {
-        format!(
-            r#"<link rel="stylesheet" href="/{}" />"#,
-            item.file.display()
-        )
-    })
-    .collect())
+    Ok(
+        vite_manifest_filter(static_root, "css", |item| DIRECT_DEPS.contains(&*item.src))
+            .await?
+            .map(|item| {
+                format!(
+                    r#"<link rel="stylesheet" href="/{}" />"#,
+                    item.file.display()
+                )
+            })
+            .collect(),
+    )
 }
 
 #[cfg(not(debug_assertions))]
 async fn get_script_tags<P: AsRef<Path>>(static_root: P) -> Result<Vec<String>> {
-    Ok(vite_manifest_filter(static_root, |item| {
-        item.is_entry
-            && item
-                .file
-                .extension()
-                .map_or(false, |ext| ext.eq_ignore_ascii_case("js"))
-            && DIRECT_DEPS.contains(&*item.src)
-    })
-    .await?
-    .map(|item| {
-        format!(
-            r#"<script type="module" src="/{}"></script>"#,
-            item.file.display()
-        )
-    })
-    .collect())
+    Ok(
+        vite_manifest_filter(static_root, "js", |item| DIRECT_DEPS.contains(&*item.src))
+            .await?
+            .map(|item| {
+                format!(
+                    r#"<script type="module" src="/{}"></script>"#,
+                    item.file.display()
+                )
+            })
+            .collect(),
+    )
 }
 
 #[cfg(not(debug_assertions))]
@@ -212,22 +213,17 @@ async fn get_non_direct_css_links<P: AsRef<Path>>(
     static_root: P,
     dependencies: HashSet<&'static str>,
 ) -> Result<Vec<String>> {
-    Ok(vite_manifest_filter(static_root, |item| {
-        item.is_entry
-            && item
-                .file
-                .extension()
-                .map_or(false, |ext| ext.eq_ignore_ascii_case("css"))
-            && dependencies.contains(&*item.src)
-    })
-    .await?
-    .map(|item| {
-        format!(
-            r#"<link rel="stylesheet" href="/{}" />"#,
-            item.file.display()
-        )
-    })
-    .collect())
+    Ok(
+        vite_manifest_filter(static_root, "css", |item| dependencies.contains(&*item.src))
+            .await?
+            .map(|item| {
+                format!(
+                    r#"<link rel="stylesheet" href="/{}" />"#,
+                    item.file.display()
+                )
+            })
+            .collect(),
+    )
 }
 
 #[cfg(not(debug_assertions))]
@@ -235,26 +231,22 @@ async fn get_non_direct_script_tags<P: AsRef<Path>>(
     static_root: P,
     dependencies: HashSet<&'static str>,
 ) -> Result<Vec<String>> {
-    Ok(vite_manifest_filter(static_root, |item| {
-        item.is_entry
-            && item
-                .file
-                .extension()
-                .map_or(false, |ext| ext.eq_ignore_ascii_case("js"))
-            && dependencies.contains(&*item.src)
-    })
-    .await?
-    .map(|item| {
-        format!(
-            r#"<link rel="stylesheet" href="/{}" />"#,
-            item.file.display()
-        )
-    })
-    .collect())
+    Ok(
+        vite_manifest_filter(static_root, "js", |item| dependencies.contains(&*item.src))
+            .await?
+            .map(|item| {
+                format!(
+                    r#"<link rel="stylesheet" href="/{}" />"#,
+                    item.file.display()
+                )
+            })
+            .collect(),
+    )
 }
 
 #[cfg(debug_assertions)]
-pub(crate) fn render_template<C: Serialize>(
+#[tracing::instrument(skip(templater))]
+pub(crate) fn render_template<C: Serialize + std::fmt::Debug>(
     templater: &JinjaAutoReloader,
     name: Template,
     context: C,
@@ -262,7 +254,10 @@ pub(crate) fn render_template<C: Serialize>(
     let templater = templater.acquire_env()?;
     let template = templater.get_template(name.into())?;
 
-    Ok(template.render(context)?)
+    let res = template.render(context)?;
+    info!("render template");
+
+    Ok(res)
 }
 
 #[cfg(not(debug_assertions))]

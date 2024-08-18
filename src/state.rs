@@ -11,6 +11,8 @@ use std::{path::PathBuf, sync::Arc};
 use anyhow::Result;
 #[cfg(not(debug_assertions))]
 use tokio::fs;
+#[cfg(not(debug_assertions))]
+use tracing::info;
 
 #[allow(clippy::module_name_repetitions)]
 #[cfg(debug_assertions)]
@@ -67,6 +69,7 @@ impl AppState {
 
     /// Load Jinja templates into the templater.
     #[allow(clippy::missing_errors_doc, clippy::missing_panics_doc)]
+    #[tracing::instrument(level = "info", skip(self))]
     pub async fn load_templates(mut self) -> Result<Self> {
         let mut templates_dir = fs::read_dir(&self.config.static_root).await?;
 
@@ -86,7 +89,8 @@ impl AppState {
             }
 
             let template = String::from_utf8(fs::read(&file_path).await?)?;
-            self.templater.add_template_owned(file_name, template)?;
+            self.templater.add_template_owned(file_name.clone(), template)?;
+            info!("loaded template {}", file_name);
         }
 
         Ok(self)

@@ -4,7 +4,7 @@ use serde::Serialize;
 use sqlx::{prelude::FromRow, query, query_as, SqlitePool};
 use uuid::{fmt::Hyphenated, Uuid};
 
-#[derive(FromRow, Serialize)]
+#[derive(Debug, FromRow, Serialize)]
 pub(crate) struct Project {
     pub id: Uuid,
     pub created_at: DateTime<Utc>,

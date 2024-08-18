@@ -7,7 +7,13 @@ use crate::{
     },
     AppState,
 };
-use axum::{extract::State, response::Html, routing::get, Router};
+use axum::{
+    extract::State,
+    response::{Html, IntoResponse},
+    routing::get,
+    Router,
+};
+use http::StatusCode;
 use std::{collections::HashSet, path::Path};
 use tower_http::services::{ServeDir, ServeFile};
 
@@ -58,7 +64,9 @@ async fn render_projects(State(state): State<AppState>) -> HandlerResult<Html<St
     Ok(Html(result))
 }
 
-pub(super) async fn render_not_found(State(state): State<AppState>) -> HandlerResult<Html<String>> {
+pub(super) async fn render_not_found(
+    State(state): State<AppState>,
+) -> HandlerResult<impl IntoResponse> {
     let context = ErrorTemplateContext {
         meta: TemplateMeta::generate("404 Not Found | ", &state.config.static_root).await?,
         error_code: 404,
@@ -66,5 +74,5 @@ pub(super) async fn render_not_found(State(state): State<AppState>) -> HandlerRe
     };
     let result = templating::render_template(&state.templater, Template::Error, context)?;
 
-    Ok(Html(result))
+    Ok((StatusCode::NOT_FOUND, Html(result)).into_response())
 }
