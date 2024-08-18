@@ -13,6 +13,7 @@ pub(crate) type HandlerResult<T> = Result<T, AppError>;
 
 #[derive(Error, Debug)]
 pub(crate) enum AppError {
+    #[allow(dead_code)]
     #[error("Not Found")]
     NotFound,
 
@@ -34,8 +35,7 @@ impl AppError {
     fn status_code(&self) -> u16 {
         match self {
             AppError::NotFound => 404,
-            AppError::Sqlx(_) => 500,
-            AppError::Anyhow(_) => 500,
+            AppError::Sqlx(_) | AppError::Anyhow(_) => 500,
         }
     }
 }
@@ -49,9 +49,7 @@ impl IntoResponse for AppError {
                 code: self.status_code(),
                 description: self.to_string(),
                 #[cfg(debug_assertions)]
-                source: self
-                    .source()
-                    .map_or(String::default(), |source| source.to_string()),
+                source: self.source().map_or(String::default(), ToString::to_string),
                 #[cfg(not(debug_assertions))]
                 source: "An unexpected error occurred while trying to process the request"
                     .to_string(),

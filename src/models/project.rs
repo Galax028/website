@@ -4,7 +4,7 @@ use serde::Serialize;
 use sqlx::{prelude::FromRow, query, query_as, SqlitePool};
 use uuid::{fmt::Hyphenated, Uuid};
 
-#[derive(FromRow, Serialize)]
+#[derive(Debug, FromRow, Serialize)]
 pub(crate) struct Project {
     pub id: Uuid,
     pub created_at: DateTime<Utc>,
@@ -17,6 +17,7 @@ pub(crate) struct Project {
 }
 
 impl Project {
+    #[allow(dead_code)]
     pub(crate) async fn create(
         pool: &SqlitePool,
         name: &str,
