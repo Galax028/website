@@ -17,6 +17,7 @@ pub(crate) struct Project {
 }
 
 impl Project {
+    #[allow(dead_code)]
     pub(crate) async fn create(
         pool: &SqlitePool,
         name: &str,

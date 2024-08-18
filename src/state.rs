@@ -1,4 +1,4 @@
-use crate::AppConfig;
+use crate::Config;
 use minijinja::Environment as JinjaEnvironment;
 use sqlx::SqlitePool;
 
@@ -12,11 +12,12 @@ use anyhow::Result;
 #[cfg(not(debug_assertions))]
 use tokio::fs;
 
+#[allow(clippy::module_name_repetitions)]
 #[cfg(debug_assertions)]
 /// Global state for the application.
 #[derive(Clone)]
 pub struct AppState {
-    pub config: AppConfig,
+    pub config: Config,
     pub pool: SqlitePool,
     pub templater: Arc<JinjaAutoReloader>,
 }
@@ -24,7 +25,8 @@ pub struct AppState {
 #[cfg(debug_assertions)]
 impl AppState {
     /// Creates a new `AppState`.
-    pub fn new(config: AppConfig, pool: SqlitePool) -> Self {
+    #[must_use]
+    pub fn new(config: Config, pool: SqlitePool) -> Self {
         AppState {
             config,
             pool,
@@ -41,11 +43,12 @@ impl AppState {
     }
 }
 
+#[allow(clippy::module_name_repetitions)]
 #[cfg(not(debug_assertions))]
 /// Global state for the application.
 #[derive(Clone)]
 pub struct AppState {
-    pub config: AppConfig,
+    pub config: Config,
     pub pool: SqlitePool,
     pub templater: JinjaEnvironment<'static>,
 }
@@ -53,7 +56,8 @@ pub struct AppState {
 #[cfg(not(debug_assertions))]
 impl AppState {
     /// Creates a new `AppState`.
-    pub fn new(config: AppConfig, pool: SqlitePool) -> Self {
+    #[must_use]
+    pub fn new(config: Config, pool: SqlitePool) -> Self {
         AppState {
             config,
             pool,
@@ -62,6 +66,7 @@ impl AppState {
     }
 
     /// Load Jinja templates into the templater.
+    #[allow(clippy::missing_errors_doc, clippy::missing_panics_doc)]
     pub async fn load_templates(mut self) -> Result<Self> {
         let mut templates_dir = fs::read_dir(&self.config.static_root).await?;
 

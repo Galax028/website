@@ -9,11 +9,11 @@ use std::{str::FromStr, time::Duration};
 use tokio::{net::TcpListener, signal};
 use tower::ServiceBuilder;
 use tower_http::{cors::CorsLayer, normalize_path::NormalizePathLayer};
-use website::{register_routes, AppConfig, AppState};
+use website::{root, AppState, Config};
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let config = AppConfig::new().context("Failed to parse config")?;
+    let config = Config::new().context("Failed to parse config")?;
 
     let pool = SqlitePoolOptions::new()
         .acquire_timeout(Duration::from_secs(10))
@@ -37,7 +37,7 @@ async fn main() -> Result<()> {
         .context("Failed to load templates")?;
 
     let app = Router::new()
-        .merge(register_routes(&config.static_root))
+        .merge(root(&config.static_root))
         .with_state(app_state)
         .layer(
             ServiceBuilder::new()

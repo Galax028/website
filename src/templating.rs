@@ -136,13 +136,13 @@ struct ViteManifestItem {
     is_entry: bool,
 }
 
-#[allow(unused_variables)]
+#[allow(clippy::unused_async, unused_variables)]
 #[cfg(debug_assertions)]
 async fn get_css_links<P: AsRef<Path>>(static_root: P) -> Result<Vec<String>> {
     Ok(Vec::new())
 }
 
-#[allow(unused_variables)]
+#[allow(clippy::unused_async, unused_variables)]
 #[cfg(debug_assertions)]
 async fn get_script_tags<P: AsRef<Path>>(static_root: P) -> Result<Vec<String>> {
     Ok(["@vite/client", "main.ts", "styles/global.css"]
