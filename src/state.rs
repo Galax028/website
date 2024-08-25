@@ -1,5 +1,4 @@
-use crate::AppConfig;
-
+use crate::Config;
 use minijinja::Environment as JinjaEnvironment;
 use sqlx::SqlitePool;
 
@@ -12,13 +11,15 @@ use std::{path::PathBuf, sync::Arc};
 use anyhow::Result;
 #[cfg(not(debug_assertions))]
 use tokio::fs;
+#[cfg(not(debug_assertions))]
+use tracing::info;
 
+#[allow(clippy::module_name_repetitions)]
 #[cfg(debug_assertions)]
 /// Global state for the application.
 #[derive(Clone)]
-pub(crate) struct AppState {
-    pub config: AppConfig,
-    #[allow(dead_code)] // TODO: Remove later when pool gets used.
+pub struct AppState {
+    pub config: Config,
     pub pool: SqlitePool,
     pub templater: Arc<JinjaAutoReloader>,
 }
@@ -26,7 +27,8 @@ pub(crate) struct AppState {
 #[cfg(debug_assertions)]
 impl AppState {
     /// Creates a new `AppState`.
-    pub(crate) fn new(config: AppConfig, pool: SqlitePool) -> Self {
+    #[must_use]
+    pub fn new(config: Config, pool: SqlitePool) -> Self {
         AppState {
             config,
             pool,
@@ -43,12 +45,12 @@ impl AppState {
     }
 }
 
+#[allow(clippy::module_name_repetitions)]
 #[cfg(not(debug_assertions))]
 /// Global state for the application.
 #[derive(Clone)]
-pub(crate) struct AppState {
-    pub config: AppConfig,
-    #[allow(dead_code)] // TODO: Remove later when pool gets used.
+pub struct AppState {
+    pub config: Config,
     pub pool: SqlitePool,
     pub templater: JinjaEnvironment<'static>,
 }
@@ -56,7 +58,8 @@ pub(crate) struct AppState {
 #[cfg(not(debug_assertions))]
 impl AppState {
     /// Creates a new `AppState`.
-    pub(crate) fn new(config: AppConfig, pool: SqlitePool) -> Self {
+    #[must_use]
+    pub fn new(config: Config, pool: SqlitePool) -> Self {
         AppState {
             config,
             pool,
@@ -64,8 +67,10 @@ impl AppState {
         }
     }
 
+    #[allow(clippy::missing_errors_doc, clippy::missing_panics_doc)]
+    #[tracing::instrument(level = "info", skip(self))]
     /// Load Jinja templates into the templater.
-    pub(crate) async fn load_templates(mut self) -> Result<Self> {
+    pub async fn load_templates(mut self) -> Result<Self> {
         let mut templates_dir = fs::read_dir(&self.config.static_root).await?;
 
         while let Some(file) = templates_dir.next_entry().await? {
@@ -84,7 +89,9 @@ impl AppState {
             }
 
             let template = String::from_utf8(fs::read(&file_path).await?)?;
-            self.templater.add_template_owned(file_name, template)?;
+            self.templater
+                .add_template_owned(file_name.clone(), template)?;
+            info!("loaded template {}", file_name);
         }
 
         Ok(self)

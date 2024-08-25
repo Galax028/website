@@ -1,0 +1,8 @@
+CREATE TABLE tag (
+    id         TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    name       TEXT NOT NULL UNIQUE,
+
+    PRIMARY KEY (id, name)
+);

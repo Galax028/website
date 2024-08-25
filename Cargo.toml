@@ -1,18 +1,23 @@
 [package]
 name = "website"
-version = "0.2.0"
+version = "0.3.0"
+authors = ["Phawat Suksiriwan <phawat@suksiriwan.com>"]
 edition = "2021"
+homepage = "https://suksiriwan.com"
+license = "AGPL-3.0-only"
+publish = false
 
 [dependencies]
 anyhow = "1.0.86"
 axum = { version = "0.7.5", features = ["macros"] }
+chrono = { version = "0.4.38", features = ["serde"] }
 dotenvy = "0.15.7"
 http = "1.1.0"
 minijinja = { version = "2.1.2", features = ["loader"] }
 minijinja-autoreload = "2.1.2"
 serde = { version = "1.0.205", features = ["derive"] }
 serde_json = "1.0.122"
-sqlx = { version = "0.7.4", features = ["runtime-tokio", "sqlite"] }
+sqlx = { version = "0.7.4", features = ["chrono", "runtime-tokio", "sqlite", "uuid"] }
 thiserror = "1.0.63"
 tokio = { version = "1.39.2", features = [
     "tokio-macros",
@@ -22,4 +27,12 @@ tokio = { version = "1.39.2", features = [
     "signal",
 ] }
 tower = "0.4.13"
-tower-http = { version = "0.5.2", features = ["cors", "fs", "normalize-path"] }
+tower-http = { version = "0.5.2", features = ["cors", "fs", "normalize-path", "trace"] }
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+uuid = { version = "1.10.0", features = ["serde", "v4"] }
+
+[profile.release-with-debug]
+inherits = "release"
+debug = true
+debug-assertions = false

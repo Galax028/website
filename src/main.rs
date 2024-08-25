@@ -1,10 +1,5 @@
+#![forbid(unsafe_code)]
 #![warn(clippy::pedantic)]
-
-pub(crate) mod config;
-pub(crate) mod error;
-pub(crate) mod routes;
-pub(crate) mod state;
-pub(crate) mod templating;
 
 use anyhow::{Context, Result};
 use axum::Router;
@@ -13,14 +8,31 @@ use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePoolOptions};
 use std::{str::FromStr, time::Duration};
 use tokio::{net::TcpListener, signal};
 use tower::ServiceBuilder;
-use tower_http::{cors::CorsLayer, normalize_path::NormalizePathLayer};
-
-pub(crate) use config::AppConfig;
-pub(crate) use state::AppState;
+use tower_http::{
+    cors::CorsLayer,
+    normalize_path::NormalizePathLayer,
+    trace::{DefaultMakeSpan, TraceLayer},
+};
+use tracing::info;
+use tracing_subscriber::{layer::SubscriberExt as _, util::SubscriberInitExt as _, EnvFilter};
+use website::{root, AppState, Config};
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let config = AppConfig::new().context("Failed to parse config")?;
+    tracing_subscriber::registry()
+        .with(
+            #[cfg(debug_assertions)]
+            EnvFilter::builder()
+                .parse("website=debug,sqlx=debug,axum::rejection=trace,tower_http=debug")?,
+            #[cfg(not(debug_assertions))]
+            EnvFilter::builder()
+                .parse("website=info,sqlx=error,axum::rejection=error,tower_http=error")?,
+        )
+        .with(tracing_subscriber::fmt::layer())
+        .try_init()
+        .context("Failed to initialise tracing subscriber")?;
+
+    let config = Config::new().context("Failed to parse config")?;
 
     let pool = SqlitePoolOptions::new()
         .acquire_timeout(Duration::from_secs(10))
@@ -44,10 +56,11 @@ async fn main() -> Result<()> {
         .context("Failed to load templates")?;
 
     let app = Router::new()
-        .merge(routes::register(&config.static_root))
+        .merge(root(&config.static_root))
         .with_state(app_state)
         .layer(
             ServiceBuilder::new()
+                .layer(TraceLayer::new_for_http().make_span_with(DefaultMakeSpan::new()))
                 .layer(NormalizePathLayer::trim_trailing_slash())
                 .layer(
                     CorsLayer::new()
@@ -66,14 +79,13 @@ async fn main() -> Result<()> {
                             header::CONTENT_TYPE,
                             header::COOKIE,
                             header::USER_AGENT,
-                            // Track client IPs to count views
-                            // HeaderName::from_static("CF-Connecting-IP"),
                         ])
                         .allow_credentials(true),
                 ),
         );
 
     let listener = TcpListener::bind((config.host, config.port)).await.unwrap();
+    info!("listening on {}", listener.local_addr().unwrap());
     axum::serve(listener, app)
         .with_graceful_shutdown(shutdown_signal())
         .await
@@ -103,7 +115,9 @@ async fn shutdown_signal() {
     let terminate = std::future::pending::<()>();
 
     tokio::select! {
-        () = ctrl_c => {},
+        () = ctrl_c => {
+            info!("received SIGINT, stopping server");
+        },
         () = terminate => {},
     }
 }

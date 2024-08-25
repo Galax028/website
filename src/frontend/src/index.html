@@ -2,38 +2,54 @@
 {% extends "document.html" %}
 {% block main %}
 <main class="grow">
-  <h1>Hello there!</h1>
-  <p>
-    My name is Phawat Suksiriwan, and welcome to my website. You can also call
-    me by my online handle, Galax. I am a high school student based in Thailand,
-    and I aspire to become a software engineer. I have been interested in
-    computers and software since I was a kid, which led me to start my
-    programming journey in 2020. I am focused on backend web development and I
-    have a keen interest in systems programming. I also love to fiddle with
-    Linux servers, which has led me to practice DevOps and systems
-    administration (although, on a small scale).
-    <br />
-    <br />
-    On this website, you can find my <a href="/blog">blog</a> (which I rarely
-    post, lol), any projects that I have contributed to, and my contacts &ndash;
-    just in case you need to get in touch. Hope you have a nice time!
-  </p>
-  <h1>A little more about me</h1>
-  <p>
-    I started programming with only Python, but now my tools of the trade
-    include many things. I can write Python, Rust, C (amateur), HTML, CSS,
-    JavaScript, and TypeScript. The text editor that I mainly use is Visual
-    Studio Code, but I occasionally use Vim from time to time. I also dual-boot
-    Windows 10 and Arch Linux (btw) on my daily driver. My programming skills
-    were recognised in school by some seniors, and I was recruited to work as a
-    backend web developer for a team that maintains our
-    <a href="https://github.com/suankularb-wittayalai-school">school</a>'s
-    <a href="https://github.com/suankularb-wittayalai-school/mysk-frontend"
-      >internal data management platform</a
-    >! Besides programming, I am also an avid gamer (who mainly plays
-    <a href="https://www.counter-strike.net/cs2">CS2</a>) and a casual
-    <a href="https://en.wikipedia.org/wiki/Audiophile">audiophile</a> who loves
-    to hoard music.
-  </p>
+  <section>
+    <h1>Hello there!</h1>
+    <p>
+      My name is <b>Phawat Suksiriwan</b>, and welcome to my website. You can
+      also call me by my online handle, <b>Galax</b>. I am a high school student
+      in Thailand, and I aspire to become a software engineer. I have been
+      interested in computers and software since I was a kid, which led me to
+      start my programming journey in 2020. I am focused on backend web
+      development and I also have a keen interest in systems programming. When I
+      am not programming, you can find me gaming, learning, or doing
+      <a
+        href="https://en.wikipedia.org/wiki/Audiophile"
+        target="_blank"
+        rel="noreferrer"
+      >
+        audiophile</a
+      >
+      things.
+      <br />
+      <br />
+      On this website, you can find my <a href="/blog">blog</a> (which I rarely
+      post, lol), any <a href="/projects">projects</a> that I have contributed
+      to, and my contacts &ndash; just in case you need to get in touch. Hope
+      you have a nice time!
+    </p>
+  </section>
+  <section>
+    <h1>Recent posts</h1>
+    <ul class="mb-8 flex flex-col gap-y-4">
+      {% if recentPosts | length > 0 %} {% for blog in recentPosts %}
+      <li class="text-lg leading-6">
+        <span class="mr-8 inline-block w-32 text-right text-neutral-600">
+          {{ blog.updatedAt }}
+        </span>
+        <a href="/blog/{{ blog.slug }}">{{ blog.title }}</a>
+      </li>
+      {% endfor %}
+      <li class="text-center text-sm text-neutral-600">
+        <a class="hover:text-neutral-950 hover:dark:text-neutral-50" href="/"
+          >Read More...</a
+        >
+      </li>
+      {% else %}
+      <li class="text-center text-lg leading-6 text-neutral-600">
+        <i>It seems a little bit empty over here...</i>
+      </li>
+      {% endif %}
+    </ul>
+  </section>
 </main>
 {% endblock %}
