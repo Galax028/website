@@ -91,7 +91,7 @@ impl Blog {
                     slug,
                     substr(content, 1, 160) AS "description!: String"
                 FROM blog
-                LIMIT 5 OFFSET $1
+                ORDER BY created_at LIMIT 5 OFFSET $1
                 "#,
                 offset,
             )
@@ -118,7 +118,7 @@ impl Blog {
                 WHERE
                     lower(title) LIKE lower('%' || $1 || '%') OR
                     lower(content) LIKE lower('%' || $1 || '%')
-                LIMIT 5 OFFSET $2
+                ORDER BY created_at LIMIT 5 OFFSET $2
                 "#,
                 actual_query,
                 offset,
@@ -147,7 +147,7 @@ impl Blog {
 
         Ok((
             res,
-            query_time.elapsed().as_millis(),
+            query_time.elapsed().as_micros(),
             Pagination {
                 current_page: u64::from(page),
                 last_page,

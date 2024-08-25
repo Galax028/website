@@ -30,7 +30,7 @@ impl Tag {
             JOIN blog_tag ON blog_tag.tag_id = tag.id
             WHERE blog_tag.blog_id = $1
             "#,
-            blog_id,
+            *blog_id.as_hyphenated(),
         )
         .fetch_all(pool)
         .await

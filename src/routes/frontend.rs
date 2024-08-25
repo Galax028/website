@@ -1,6 +1,10 @@
 use crate::{
     error::HandlerResult,
-    models::{blog::Blog, project::Project},
+    models::{
+        blog::{Blog, BlogPreview},
+        project::Project,
+        Pagination,
+    },
     templating::{
         self, ErrorTemplateContext, IndexTemplateContext, ProjectsTemplateContext, Template,
         TemplateMeta,
@@ -11,7 +15,7 @@ use axum::{
     extract::State,
     response::{Html, IntoResponse},
     routing::get,
-    Router,
+    Json, Router,
 };
 use http::StatusCode;
 use std::{collections::HashSet, path::Path};
@@ -22,6 +26,7 @@ pub(super) fn register<P: AsRef<Path>>(static_root: P) -> Router<AppState> {
 
     Router::new()
         .route("/", get(render_index))
+        .route("/blog", get(render_blog))
         .route("/projects", get(render_projects))
         .route_service(
             "/favicon-dark-mode.png",
@@ -46,6 +51,14 @@ async fn render_index(State(state): State<AppState>) -> HandlerResult<Html<Strin
     let result = templating::render_template(&state.templater, Template::Index, context)?;
 
     Ok(Html(result))
+}
+
+async fn render_blog(
+    State(state): State<AppState>,
+) -> HandlerResult<Json<(Vec<BlogPreview>, u128, Pagination)>> {
+    let result = Blog::query_blog_previews(&state.pool, 1, None).await?;
+
+    Ok(Json(result))
 }
 
 async fn render_projects(State(state): State<AppState>) -> HandlerResult<Html<String>> {
